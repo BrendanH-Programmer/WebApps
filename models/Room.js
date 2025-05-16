@@ -3,5 +3,6 @@ const roomSchema = new mongoose.Schema({
   roomNumber: String,
   capacity: Number,
   currentPatients: [{ type: mongoose.Schema.Types.ObjectId, ref: "Patient" }],
+  isIsolation: Boolean,
 });
 module.exports = mongoose.model("Room", roomSchema);

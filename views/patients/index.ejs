@@ -1,0 +1,35 @@
+<%- include("../partials/header") %>
+
+<h2>All Patients</h2>
+<a href="/patients/new">Add New Patient</a>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+      <th>Symptoms</th>
+      <th>Infection Risk</th>
+      <th>Room</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% patients.forEach(patient => { %>
+      <tr>
+        <td><%= patient.name %></td>
+        <td><%= patient.age %></td>
+        <td><%= patient.symptoms.join(", ") %></td>
+        <td><%= patient.infectionRisk %></td>
+        <td><%= patient.roomAssigned ? patient.roomAssigned.roomNumber : "Unassigned" %></td>
+        <td>
+          <a href="/patients/<%= patient._id %>/edit">Edit</a>
+          <form action="/patients/<%= patient._id %>?_method=DELETE" method="POST" style="display:inline;">
+            <button type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<%- include("../partials/footer") %>

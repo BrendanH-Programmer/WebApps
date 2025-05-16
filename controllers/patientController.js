@@ -28,3 +28,22 @@ exports.remove = async (req, res) => {
   await Patient.findByIdAndDelete(req.params.id);
   res.redirect("/patients");
 };
+
+const { assignRoomToPatient } = require("../utils/roomAssigner");
+
+exports.create = async (req, res) => {
+  const patient = new Patient(req.body);
+  const assignedRoom = await assignRoomToPatient(patient);
+
+  if (assignedRoom) {
+    patient.roomAssigned = assignedRoom._id;
+    await patient.save();
+
+    assignedRoom.currentPatients.push(patient._id);
+    await assignedRoom.save();
+
+    res.redirect("/patients");
+  } else {
+    res.send("No suitable room available");
+  }
+};

@@ -25,12 +25,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
 
-app.use(session({
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.DB_URI })
-}));
-
 app.use("/", authRoutes);
 app.use("/patients", patientRoutes);
 app.use("/rooms", roomRoutes);

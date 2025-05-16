@@ -7,12 +7,13 @@
       <th>Room Number</th>
       <th>Capacity</th>
       <th>Current Patients</th>
+      <th>Isolation</th>
     </tr>
   </thead>
   <tbody>
     <% rooms.forEach(room => { %>
       <tr>
-        <td><%= room.roomNumber %></td>
+        <td><%= room.name %></td>
         <td><%= room.capacity %></td>
         <td>
           <% if (room.currentPatients.length === 0) { %>
@@ -25,6 +26,13 @@
             </ul>
           <% } %>
         </td>
+        <td>
+          <% if (room.isIsolation) { %>
+            Yes
+          <% } else { %>
+            No
+          <% } %>
+        </td> 
       </tr>
     <% }) %>
   </tbody>

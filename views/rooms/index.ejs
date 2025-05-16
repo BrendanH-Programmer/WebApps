@@ -1,0 +1,33 @@
+<%- include("../partials/header") %>
+
+<h2>All Rooms</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Room Number</th>
+      <th>Capacity</th>
+      <th>Current Patients</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% rooms.forEach(room => { %>
+      <tr>
+        <td><%= room.roomNumber %></td>
+        <td><%= room.capacity %></td>
+        <td>
+          <% if (room.currentPatients.length === 0) { %>
+            None
+          <% } else { %>
+            <ul>
+              <% room.currentPatients.forEach(p => { %>
+                <li><%= p.name %></li>
+              <% }) %>
+            </ul>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<%- include("../partials/footer") %>

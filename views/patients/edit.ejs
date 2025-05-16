@@ -1,0 +1,12 @@
+<%- include("../partials/header") %>
+
+<h2>Edit Patient</h2>
+<form action="/patients/<%= patient._id %>?_method=PUT" method="POST">
+  <label>Name: <input type="text" name="name" value="<%= patient.name %>" required></label>
+  <label>Age: <input type="number" name="age" value="<%= patient.age %>" required></label>
+  <label>Symptoms (comma separated): <input type="text" name="symptoms" value="<%= patient.symptoms.join(", ") %>" required></label>
+  <label>Infection Risk (0–10): <input type="number" name="infectionRisk" value="<%= patient.infectionRisk %>" required></label>
+  <button type="submit">Update Patient</button>
+</form>
+
+<%- include("../partials/footer") %>

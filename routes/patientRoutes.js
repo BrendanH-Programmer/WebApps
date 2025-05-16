@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const patientController = require("../controllers/patientController");
-const { isAuthenticated } = require("../middleware/authMiddleware");
+const { isAuthenticated } = require("../utils/authMiddleware");
 
 router.get("/", patientController.index);
 router.get("/new", patientController.new);

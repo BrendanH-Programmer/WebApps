@@ -1,0 +1,23 @@
+{
+  "name": "Hospital-Room-Management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrendanH-Programmer/WebApps.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BrendanH-Programmer/WebApps/issues"
+  },
+  "homepage": "https://github.com/BrendanH-Programmer/WebApps#readme"
+}

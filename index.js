@@ -25,6 +25,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
 
+app.use(session({
+  secret: 'hospitalSecretKey',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: "mongodb://20.0.153.128:10999/BrendanDB",
+    ttl: 14 * 24 * 60 * 60 // Session TTL (14 days)
+  }),
+  cookie: { secure: false } // Set to true if using HTTPS
+}));
+
 app.use("/", authRoutes);
 app.use("/patients", patientRoutes);
 app.use("/rooms", roomRoutes);

@@ -4,6 +4,6 @@ const roomController = require("../controllers/roomController");
 const { isAuthenticated } = require("../utils/authMiddleware");
 
 router.get("/", roomController.index);
-router.get("/", isAuthenticated, patientController.index);
+router.get("/", isAuthenticated, patientController.js);
 
 module.exports = router;

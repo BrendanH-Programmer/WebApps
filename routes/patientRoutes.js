@@ -9,6 +9,6 @@ router.post("/", patientController.create);
 router.get("/:id/edit", patientController.edit);
 router.put("/:id", patientController.update);
 router.delete("/:id", patientController.remove);
-router.get("/", isAuthenticated, patientController.index);
+router.get("/", isAuthenticated, patientController.js);
 
 module.exports = router;

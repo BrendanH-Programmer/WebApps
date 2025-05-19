@@ -2,9 +2,9 @@
 
 <h2>Edit Patient</h2>
 <form action="/patients/<%= patient._id %>?_method=PUT" method="POST">
-
   <label>Title:
     <select name="title" required>
+      <option value="">Select</option>
       <option value="Mr" <%= patient.title === "Mr" ? "selected" : "" %>>Mr</option>
       <option value="Mrs" <%= patient.title === "Mrs" ? "selected" : "" %>>Mrs</option>
       <option value="Miss" <%= patient.title === "Miss" ? "selected" : "" %>>Miss</option>
@@ -15,25 +15,19 @@
     </select>
   </label>
 
-  <label>First Name:
-    <input type="text" name="firstName" value="<%= patient.firstName %>" required>
-  </label>
+  <label>First Name: <input type="text" name="firstName" value="<%= patient.firstName %>" required></label>
+  <label>Surname: <input type="text" name="surname" value="<%= patient.surname %>" required></label>
+  <label>Age: <input type="number" name="age" value="<%= patient.age %>" required></label>
 
-  <label>Surname:
-    <input type="text" name="surname" value="<%= patient.surname %>" required>
-  </label>
-
-  <label>Age:
-    <input type="number" name="age" value="<%= patient.age %>" required>
-  </label>
-
-  <label>Symptoms (comma separated):
-    <input type="text" name="symptoms" value="<%= patient.symptoms.join(", ") %>" required>
-  </label>
-
-  <label>Infection Risk (0–10):
-    <input type="number" name="infectionRisk" value="<%= patient.infectionRisk %>" required>
-  </label>
+  <fieldset>
+    <legend>Select Symptoms</legend>
+    <% symptomList.forEach(symptom => { %>
+      <label>
+        <input type="checkbox" name="symptoms" value="<%= symptom %>"
+          <%= patient.symptoms.includes(symptom) ? "checked" : "" %>> <%= symptom %>
+      </label>
+    <% }) %>
+  </fieldset>
 
   <button type="submit">Update Patient</button>
 </form>

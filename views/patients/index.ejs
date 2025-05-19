@@ -1,11 +1,12 @@
 <%- include("../partials/header") %>
 
-<h2>All Patients</h2>
 <a href="/patients/new">Add New Patient</a>
 <table>
   <thead>
     <tr>
-      <th>Name</th>
+      <th>Title</th>
+      <th>First Name</th>
+      <th>Surname</th>
       <th>Age</th>
       <th>Symptoms</th>
       <th>Infection Risk</th>
@@ -16,11 +17,13 @@
   <tbody>
     <% patients.forEach(patient => { %>
       <tr>
-        <td><%= patient.title %> <%= patient.firstName %> <%= patient.surname %></td>
+        <td><%= patient.title %></td>
+        <td><%= patient.firstName %></td>
+        <td><%= patient.surname %></td>
         <td><%= patient.age %></td>
         <td><%= patient.symptoms.join(", ") %></td>
         <td><%= patient.infectionRisk %></td>
-        <td><%= patient.roomAssigned ? patient.roomAssigned.roomNumber : "Unassigned" %></td>
+        <td><%= patient.roomAssigned ? patient.roomAssigned.name : "Unassigned" %></td>
         <td>
           <a href="/patients/<%= patient._id %>/edit">Edit</a>
           <form action="/patients/<%= patient._id %>?_method=DELETE" method="POST" style="display:inline;">

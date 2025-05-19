@@ -2,28 +2,33 @@
 
 <h2>Add New Patient</h2>
 <form action="/patients" method="POST">
-  <label for="title">Title:</label>
-  <select name="title" required>
-    <option value="Mr">Mr</option>
-    <option value="Mrs">Mrs</option>
-    <option value="Miss">Miss</option>
-    <option value="Ms">Ms</option>
-    <option value="Dr">Dr</option>
-    <option value="Prof">Prof</option>
-    <option value="Mx">Mx</option>
-  </select><br>
-  <label for="firstName">First Name:</label>
-  <input type="text" name="firstName" required><br>
-  <label for="surname">Surname:</label>
-  <input type="text" name="surname" required><br>
-  <label>Age: <input type="number" name="age" required></label>
-  <label>Symptoms (comma separated): <input type="text" name="symptoms" required></label>
-  <label>Infection Risk (0–10): <input type="number" name="infectionRisk" required></label>
-  <button type="submit">Add Patient</button>
-</form>
-  <!-- Other fields (age, symptoms, etc) -->
-  <button type="submit">Add Patient</button>
-</form>
+  <label>Title:
+    <select name="title" required>
+      <option value="">Select</option>
+      <option>Mr</option>
+      <option>Mrs</option>
+      <option>Miss</option>
+      <option>Ms</option>
+      <option>Dr</option>
+      <option>Prof</option>
+      <option>Mx</option>
+    </select>
+  </label>
 
+  <label>First Name: <input type="text" name="firstName" required></label>
+  <label>Surname: <input type="text" name="surname" required></label>
+  <label>Age: <input type="number" name="age" required></label>
+
+  <fieldset>
+    <legend>Select Symptoms</legend>
+    <% symptomList.forEach(symptom => { %>
+      <label>
+        <input type="checkbox" name="symptoms" value="<%= symptom %>"> <%= symptom %>
+      </label>
+    <% }) %>
+  </fieldset>
+
+  <button type="submit">Add Patient</button>
+</form>
 
 <%- include("../partials/footer") %>

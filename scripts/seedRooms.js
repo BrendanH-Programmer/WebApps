@@ -4,10 +4,10 @@ const Room = require("../models/Room");
 async function seedRooms() {
   try {
     await mongoose.connect("mongodb://20.0.153.128:10999/BrendanDB");
-    console.log("✅ MongoDB connected");
+    console.log("MongoDB connected");
 
     await Room.deleteMany(); // Optional: remove existing rooms
-    console.log("🧹 Existing rooms cleared");
+    console.log("Existing rooms cleared");
 
     const rooms = [
       { name: "101", capacity: 2, currentPatients: [], isIsolation: false },
@@ -24,12 +24,12 @@ async function seedRooms() {
     ];
 
     await Room.insertMany(rooms);
-    console.log("✅ Rooms seeded successfully");
+    console.log("Rooms seeded successfully");
   } catch (error) {
-    console.error("❌ Error seeding rooms:", error);
+    console.error("Error seeding rooms:", error);
   } finally {
     await mongoose.disconnect();
-    console.log("🔌 MongoDB disconnected");
+    console.log("MongoDB disconnected");
   }
 }
 

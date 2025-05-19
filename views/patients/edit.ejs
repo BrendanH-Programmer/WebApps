@@ -23,9 +23,10 @@
     <legend>Select Symptoms</legend>
     <% symptomList.forEach(symptom => { %>
       <label>
-        <input type="checkbox" name="symptoms" value="<%= symptom %>"
-          <%= patient.symptoms.includes(symptom) ? "checked" : "" %>> <%= symptom %>
-      </label>
+        <input type="checkbox" name="symptoms" value="<%= symptom.name %>" 
+          <%= patient.symptoms.includes(symptom.name) ? 'checked' : '' %>>
+        <%= symptom.name %> (Risk: <%= symptom.riskValue %>)
+      </label><br>
     <% }) %>
   </fieldset>
 

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Room = require("./models/Room");
+const Room = require("../models/Room");
 
 async function seedRooms() {
   try {

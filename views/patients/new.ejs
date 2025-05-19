@@ -19,12 +19,12 @@
   <label>Surname: <input type="text" name="surname" required></label>
   <label>Age: <input type="number" name="age" required></label>
 
-  <fieldset>
+ <fieldset>
     <legend>Select Symptoms</legend>
     <% symptomList.forEach(symptom => { %>
       <label>
-        <input type="checkbox" name="symptoms" value="<%= symptom %>"> <%= symptom %>
-      </label>
+        <input type="checkbox" name="symptoms" value="<%= symptom.name %>"> <%= symptom.name %> (Risk: <%= symptom.riskValue %>)
+      </label><br>
     <% }) %>
   </fieldset>
 

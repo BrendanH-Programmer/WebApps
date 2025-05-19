@@ -12,13 +12,15 @@
     <option value="Prof">Prof</option>
     <option value="Mx">Mx</option>
   </select><br>
-
   <label for="firstName">First Name:</label>
   <input type="text" name="firstName" required><br>
-
   <label for="surname">Surname:</label>
   <input type="text" name="surname" required><br>
-
+  <label>Age: <input type="number" name="age" required></label>
+  <label>Symptoms (comma separated): <input type="text" name="symptoms" required></label>
+  <label>Infection Risk (0–10): <input type="number" name="infectionRisk" required></label>
+  <button type="submit">Add Patient</button>
+</form>
   <!-- Other fields (age, symptoms, etc) -->
   <button type="submit">Add Patient</button>
 </form>

@@ -16,7 +16,7 @@
   <tbody>
     <% patients.forEach(patient => { %>
       <tr>
-        <td><%= patient.name %></td>
+        <td><%= patient.title %> <%= patient.firstName %> <%= patient.surname %></td>
         <td><%= patient.age %></td>
         <td><%= patient.symptoms.join(", ") %></td>
         <td><%= patient.infectionRisk %></td>

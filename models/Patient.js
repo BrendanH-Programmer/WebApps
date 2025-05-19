@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const patientSchema = new mongoose.Schema({
-  name: String,
+  title: {
+    type: String,
+    enum: ["Mr", "Mrs", "Miss", "Ms", "Dr", "Prof", "Mx"], // Add more as needed
+  },
+  firstName: String,
+  surname: String,
   age: Number,
   symptoms: [String],
   infectionRisk: Number,

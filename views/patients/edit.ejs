@@ -2,10 +2,39 @@
 
 <h2>Edit Patient</h2>
 <form action="/patients/<%= patient._id %>?_method=PUT" method="POST">
-  <label>Name: <input type="text" name="name" value="<%= patient.name %>" required></label>
-  <label>Age: <input type="number" name="age" value="<%= patient.age %>" required></label>
-  <label>Symptoms (comma separated): <input type="text" name="symptoms" value="<%= patient.symptoms.join(", ") %>" required></label>
-  <label>Infection Risk (0–10): <input type="number" name="infectionRisk" value="<%= patient.infectionRisk %>" required></label>
+
+  <label>Title:
+    <select name="title" required>
+      <option value="Mr" <%= patient.title === "Mr" ? "selected" : "" %>>Mr</option>
+      <option value="Mrs" <%= patient.title === "Mrs" ? "selected" : "" %>>Mrs</option>
+      <option value="Miss" <%= patient.title === "Miss" ? "selected" : "" %>>Miss</option>
+      <option value="Ms" <%= patient.title === "Ms" ? "selected" : "" %>>Ms</option>
+      <option value="Dr" <%= patient.title === "Dr" ? "selected" : "" %>>Dr</option>
+      <option value="Prof" <%= patient.title === "Prof" ? "selected" : "" %>>Prof</option>
+      <option value="Mx" <%= patient.title === "Mx" ? "selected" : "" %>>Mx</option>
+    </select>
+  </label>
+
+  <label>First Name:
+    <input type="text" name="firstName" value="<%= patient.firstName %>" required>
+  </label>
+
+  <label>Surname:
+    <input type="text" name="surname" value="<%= patient.surname %>" required>
+  </label>
+
+  <label>Age:
+    <input type="number" name="age" value="<%= patient.age %>" required>
+  </label>
+
+  <label>Symptoms (comma separated):
+    <input type="text" name="symptoms" value="<%= patient.symptoms.join(", ") %>" required>
+  </label>
+
+  <label>Infection Risk (0–10):
+    <input type="number" name="infectionRisk" value="<%= patient.infectionRisk %>" required>
+  </label>
+
   <button type="submit">Update Patient</button>
 </form>
 

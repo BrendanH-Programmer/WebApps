@@ -11,19 +11,22 @@
       <option value="Ms" <%= patient.title === "Ms" ? "selected" : "" %>>Ms</option>
       <option value="Dr" <%= patient.title === "Dr" ? "selected" : "" %>>Dr</option>
       <option value="Prof" <%= patient.title === "Prof" ? "selected" : "" %>>Prof</option>
-      <option value="Mx" <%= patient.title === "Mx" ? "selected" : "" %>>Mx</option>
     </select>
   </label>
 
   <label>First Name: <input type="text" name="firstName" value="<%= patient.firstName %>" required></label>
   <label>Surname: <input type="text" name="surname" value="<%= patient.surname %>" required></label>
-  <label>Age: <input type="number" name="age" value="<%= patient.age %>" required></label>
+
+  <label>Date of Birth:
+    <input type="date" name="dateOfBirth" value="<%= patient.dateOfBirth.toISOString().split('T')[0] %>" required
+           max="<%= new Date().toISOString().split('T')[0] %>">
+  </label>
 
   <fieldset>
     <legend>Select Symptoms</legend>
     <% symptomList.forEach(symptom => { %>
       <label>
-        <input type="checkbox" name="symptoms" value="<%= symptom.name %>" 
+        <input type="checkbox" name="symptoms" value="<%= symptom.name %>"
           <%= patient.symptoms.includes(symptom.name) ? 'checked' : '' %>>
         <%= symptom.name %> (Risk: <%= symptom.riskValue %>)
       </label><br>

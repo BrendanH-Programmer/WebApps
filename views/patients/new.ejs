@@ -11,19 +11,22 @@
       <option>Ms</option>
       <option>Dr</option>
       <option>Prof</option>
-      <option>Mx</option>
     </select>
   </label>
 
   <label>First Name: <input type="text" name="firstName" required></label>
   <label>Surname: <input type="text" name="surname" required></label>
-  <label>Age: <input type="number" name="age" required></label>
 
- <fieldset>
+  <label>Date of Birth: 
+    <input type="date" name="dateOfBirth" required max="<%= new Date().toISOString().split('T')[0] %>">
+  </label>
+
+  <fieldset>
     <legend>Select Symptoms</legend>
     <% symptomList.forEach(symptom => { %>
       <label>
-        <input type="checkbox" name="symptoms" value="<%= symptom.name %>"> <%= symptom.name %> (Risk: <%= symptom.riskValue %>)
+        <input type="checkbox" name="symptoms" value="<%= symptom.name %>"> 
+        <%= symptom.name %> (Risk: <%= symptom.riskValue %>)
       </label><br>
     <% }) %>
   </fieldset>

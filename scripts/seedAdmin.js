@@ -1,20 +1,22 @@
-require("dotenv").config();
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 
 async function seedAdmin() {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("Connected to MongoDB");
+    await mongoose.connect("mongodb://20.0.153.128:10999/BrendanDB"); // direct connection string
+    console.log("MongoDB connected");
 
-    const existingAdmin = await User.findOne({ username: process.env.ADMIN_USERNAME });
+    const adminUsername = "admin"; // or use any value you want
+    const adminPassword = "admin123"; // change to a strong password
+
+    const existingAdmin = await User.findOne({ username: adminUsername });
     if (existingAdmin) {
       console.log("Admin already exists");
     } else {
-      const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
       const admin = new User({
-        username: process.env.ADMIN_USERNAME,
+        username: adminUsername,
         password: hashedPassword,
         role: "admin"
       });
@@ -25,7 +27,7 @@ async function seedAdmin() {
     console.error("Error seeding admin:", err);
   } finally {
     await mongoose.disconnect();
-    console.log("Disconnected from MongoDB");
+    console.log("MongoDB disconnected");
   }
 }
 

@@ -4,9 +4,8 @@ const User = require("../models/User");
 // Register a new user (default role: "nurse")
 exports.register = async (req, res) => {
   const { username, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    const newUser = new User({ username, password: hashedPassword, role: "nurse" }); // role set to "nurse"
+    const newUser = new User({ username, password, role: "nurse" }); // role set to "nurse"
     await newUser.save();
     res.redirect("/login");
   } catch (err) {
@@ -15,25 +14,29 @@ exports.register = async (req, res) => {
   }
 };
 
-// Login an existing user
 exports.login = async (req, res) => {
   const { username, password } = req.body;
+  console.log("Attempting login for:", username);
   try {
     const user = await User.findOne({ username });
-    if (!user) return res.status(400).send("User not found");
+    if (!user) {
+      console.log("User not found in DB");
+      return res.status(400).send("User not found");
+    }
 
     const match = await bcrypt.compare(password, user.password);
+    console.log("Password match result:", match);
     if (!match) return res.status(400).send("Incorrect password");
 
-    // Set session
     req.session.userId = user._id;
-    req.session.role = user.role; // 👈 Set role in session
-    res.redirect("/rooms"); // You can route differently based on role if desired
+    req.session.role = user.role;
+    res.redirect("/rooms");
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).send("Login failed");
   }
 };
+
 
 // Logout the current user
 exports.logout = (req, res) => {

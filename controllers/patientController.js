@@ -116,3 +116,16 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
+// Show single patient details
+exports.show = async (req, res) => {
+  try {
+    const patient = await Patient.findById(req.params.id).populate("roomAssigned");
+    if (!patient) {
+      return res.status(404).send("Patient not found");
+    }
+    res.render("patients/view", { patient });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error retrieving patient details");
+  }
+};

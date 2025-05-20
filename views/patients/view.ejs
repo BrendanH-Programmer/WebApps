@@ -1,0 +1,30 @@
+<%- include("../partials/header") %>
+
+<h2>Patient Details</h2>
+
+<p><strong>Title:</strong> <%= patient.title %></p>
+<p><strong>First Name:</strong> <%= patient.firstName %></p>
+<p><strong>Surname:</strong> <%= patient.surname %></p>
+<p><strong>Date of Birth:</strong> <%= patient.dateOfBirth.toISOString().split('T')[0] %></p>
+<p><strong>Age:</strong> 
+  <% 
+    const birthDate = new Date(patient.dateOfBirth);
+    const ageDifMs = Date.now() - birthDate.getTime();
+    const ageDate = new Date(ageDifMs);
+    const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+  %>
+  <%= age %>
+</p>
+<p><strong>Symptoms:</strong> <%= patient.symptoms.join(", ") %></p>
+<p><strong>Infection Risk:</strong> <%= patient.infectionRisk %></p>
+<p><strong>Room Assigned:</strong> <%= patient.roomAssigned ? patient.roomAssigned.name : "Unassigned" %></p>
+
+<a href="/patients/<%= patient._id %>/edit">Edit Patient</a> |
+<form action="/patients/<%= patient._id %>?_method=DELETE" method="POST" style="display:inline;">
+  <button type="submit" style="background:none; border:none; padding:0; color:#007bff; cursor:pointer; font-size:1em; text-decoration:underline;">
+    Delete
+  </button>
+</form>
+<a href="/patients">Back to Patient List</a>
+
+<%- include("../partials/footer") %>

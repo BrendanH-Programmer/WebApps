@@ -23,8 +23,8 @@
     %>
       <tr>
         <td><%= patient.title %></td>
-        <td><%= patient.firstName %></td>
-        <td><%= patient.surname %></td>
+        <td><a href="/patients/<%= patient._id %>"><%= patient.firstName %></a></td>
+        <td><a href="/patients/<%= patient._id %>"><%= patient.surname %></a></td>
         <td><%= age %></td>
         <td><%= patient.symptoms.join(", ") %></td>
         <td><%= patient.infectionRisk %></td>

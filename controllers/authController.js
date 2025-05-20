@@ -28,7 +28,7 @@ exports.login = async (req, res) => {
     // Set session
     req.session.userId = user._id;
     req.session.role = user.role; // 👈 Set role in session
-    res.redirect("/dashboard"); // You can route differently based on role if desired
+    res.redirect("/rooms"); // You can route differently based on role if desired
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).send("Login failed");

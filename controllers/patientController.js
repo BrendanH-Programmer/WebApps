@@ -22,7 +22,6 @@ exports.edit = async (req, res) => {
   res.render("patients/edit", { patient, symptomList });
 };
 
-// Create a new patient and calculate infection risk
 exports.create = async (req, res) => {
   try {
     const selectedSymptoms = Array.isArray(req.body.symptoms)
@@ -32,26 +31,27 @@ exports.create = async (req, res) => {
     const symptomsData = await Symptom.find({ name: { $in: selectedSymptoms } });
     const infectionRisk = symptomsData.reduce((sum, s) => sum + s.riskValue, 0);
 
-    const patient = new Patient({
+    const newPatient = new Patient({
       title: req.body.title,
-      firstName: req.body.firstName,
-      surname: req.body.surname,
-      age: req.body.age,
+      firstName: capitalize(req.body.firstName),
+      surname: capitalize(req.body.surname),
+      dateOfBirth: req.body.dateOfBirth,
       symptoms: selectedSymptoms,
       infectionRisk
     });
 
-    const assignedRoom = await assignRoomToPatient(patient);
+    const assignedRoom = await assignRoomToPatient(newPatient);
     if (assignedRoom) {
-      patient.roomAssigned = assignedRoom._id;
-      await patient.save();
+      newPatient.roomAssigned = assignedRoom._id;
+      await newPatient.save();
 
-      assignedRoom.currentPatients.push(patient._id);
+      assignedRoom.currentPatients.push(newPatient._id);
       await assignedRoom.save();
 
       res.redirect("/patients");
     } else {
-      res.send("No suitable room available");
+      await newPatient.save(); // Save even if unassigned
+      res.send("No suitable room available. Patient added without assignment.");
     }
   } catch (err) {
     console.error(err);
@@ -112,3 +112,7 @@ function calculateAge(dob) {
   }
   return age;
 }
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+

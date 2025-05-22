@@ -5,7 +5,7 @@ const Patient = require("../models/Patient");
 exports.index = async (req, res) => {
   try {
     const rooms = await Room.find().populate("currentPatients");
-    res.render("rooms/index", { rooms });
+    res.render("rooms/index", { rooms, user: req.session.user });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching rooms");
@@ -17,7 +17,7 @@ exports.show = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id).populate("currentPatients");
     if (!room) return res.status(404).send("Room not found");
-    res.render("rooms/view", { room });
+    res.render("rooms/view", { room, user: req.session.user });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving room details");
@@ -26,7 +26,7 @@ exports.show = async (req, res) => {
 
 // Render form to create new room
 exports.new = (req, res) => {
-  res.render("rooms/new");
+  res.render("rooms/new", { user: req.session.user });
 };
 
 // Create new room
@@ -52,7 +52,7 @@ exports.edit = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id);
     if (!room) return res.status(404).send("Room not found");
-    res.render("rooms/edit", { room });
+    res.render("rooms/edit", { room, user: req.session.user });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving room for edit");
@@ -81,7 +81,6 @@ exports.update = async (req, res) => {
 // Delete room
 exports.remove = async (req, res) => {
   try {
-    // Before deleting, unassign any patients in this room
     const room = await Room.findById(req.params.id);
     if (!room) return res.status(404).send("Room not found");
 

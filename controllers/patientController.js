@@ -6,22 +6,23 @@ const { assignRoomToPatient } = require("../utils/roomAssigner");
 // List all patients
 exports.index = async (req, res) => {
   const patients = await Patient.find().populate("roomAssigned");
-  res.render("patients/index", { patients });
+  res.render("patients/index", { patients, user: req.session.user });
 };
 
 // Render new patient form with symptoms from DB
 exports.new = async (req, res) => {
   const symptomList = await Symptom.find();
-  res.render("patients/new", { symptomList });
+  res.render("patients/new", { symptomList, user: req.session.user });
 };
 
 // Render edit form with symptoms from DB
 exports.edit = async (req, res) => {
   const patient = await Patient.findById(req.params.id);
   const symptomList = await Symptom.find();
-  res.render("patients/edit", { patient, symptomList });
+  res.render("patients/edit", { patient, symptomList, user: req.session.user });
 };
 
+// Create a new patient and assign room
 exports.create = async (req, res) => {
   try {
     const selectedSymptoms = Array.isArray(req.body.symptoms)
@@ -59,7 +60,7 @@ exports.create = async (req, res) => {
   }
 };
 
-// Update patient info (optional: recalculate infection risk if symptoms changed)
+// Update patient info (recalculate infection risk if symptoms changed)
 exports.update = async (req, res) => {
   try {
     const selectedSymptoms = Array.isArray(req.body.symptoms)
@@ -85,7 +86,7 @@ exports.update = async (req, res) => {
   }
 };
 
-// Delete patient
+// Delete patient and remove from assigned room's patient list
 exports.remove = async (req, res) => {
   try {
     const patient = await Patient.findById(req.params.id);
@@ -102,6 +103,22 @@ exports.remove = async (req, res) => {
     res.status(500).send("Error deleting patient");
   }
 };
+
+// Show single patient details
+exports.show = async (req, res) => {
+  try {
+    const patient = await Patient.findById(req.params.id).populate("roomAssigned");
+    if (!patient) {
+      return res.status(404).send("Patient not found");
+    }
+    res.render("patients/view", { patient, user: req.session.user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error retrieving patient details");
+  }
+};
+
+// Helper function to calculate age from DOB
 function calculateAge(dob) {
   const today = new Date();
   const birthDate = new Date(dob);
@@ -112,20 +129,8 @@ function calculateAge(dob) {
   }
   return age;
 }
+
+// Helper to capitalize names properly
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
-
-// Show single patient details
-exports.show = async (req, res) => {
-  try {
-    const patient = await Patient.findById(req.params.id).populate("roomAssigned");
-    if (!patient) {
-      return res.status(404).send("Patient not found");
-    }
-    res.render("patients/view", { patient });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error retrieving patient details");
-  }
-};

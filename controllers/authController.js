@@ -28,15 +28,19 @@ exports.login = async (req, res) => {
     console.log("Password match result:", match);
     if (!match) return res.status(400).send("Incorrect password");
 
-    req.session.userId = user._id;
-    req.session.role = user.role;
+    // Set the whole user object in session for easier access in views and controllers
+    req.session.user = {
+      _id: user._id,
+      username: user.username,
+      role: user.role,
+    };
+
     res.redirect("/rooms");
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).send("Login failed");
   }
 };
-
 
 // Logout the current user
 exports.logout = (req, res) => {

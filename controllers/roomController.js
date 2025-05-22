@@ -41,7 +41,6 @@ exports.createRoom = async (req, res) => {
       capacity: Number(req.body.capacity),
       status: req.body.status || "Available",
       isIsolation: req.body.isIsolation === "on",
-      notes: req.body.notes || "",
     });
     await newRoom.save();
     res.redirect("/rooms");
@@ -71,7 +70,6 @@ exports.update = async (req, res) => {
       capacity: Number(req.body.capacity),
       status: req.body.status,
       isIsolation: req.body.isIsolation === "on",
-      notes: req.body.notes || "",
     };
 
     await Room.findByIdAndUpdate(req.params.id, updatedData);

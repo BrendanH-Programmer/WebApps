@@ -25,9 +25,7 @@ const roomSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Patient"
   }],
-  notes: {
-    type: String
-  }
 });
+
 
 module.exports = mongoose.model("Room", roomSchema);

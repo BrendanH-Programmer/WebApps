@@ -61,6 +61,18 @@
     <% }) %>
   </fieldset>
 
+  <label for="roomAssigned">Assign to Room:</label>
+  <select name="roomAssigned" id="roomAssigned" required>
+    <option value="">-- Select a Room --</option>
+    <% rooms.forEach(room => { %>
+      <option value="<%= room._id %>" data-isolation="<%= room.isIsolation %>" 
+        <%= patient.roomAssigned && patient.roomAssigned.toString() === room._id.toString() ? "selected" : "" %>>
+        <%= room.name %> (Capacity: <%= room.capacity %>)
+        <% if (room.isIsolation) { %> - Isolation Room <% } %>
+      </option>
+    <% }) %>
+  </select>
+
   <button type="submit">Update Patient</button>
 </form>
 

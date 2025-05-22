@@ -62,7 +62,56 @@
     <% }) %>
   </fieldset>
 
+  <label for="roomAssigned">Assign to Room:</label>
+  <select name="roomAssigned" id="roomAssigned" required>
+    <option value="">-- Select a Room --</option>
+    <% rooms.forEach(room => { %>
+      <option value="<%= room._id %>" data-isolation="<%= room.isIsolation %>">
+        <%= room.name %> (Capacity: <%= room.capacity %>)
+        <% if (room.isIsolation) { %> - Isolation Room <% } %>
+      </option>
+    <% }) %>
+  </select>
+
   <button type="submit">Add Patient</button>
 </form>
+
+<script>
+  const symptomCheckboxes = document.querySelectorAll('input[name="symptoms"]');
+  const roomSelect = document.getElementById('roomAssigned');
+
+  // Injected as a real object, not a string
+  const symptomRiskMap = <%- JSON.stringify(symptomRiskMap) %>;
+
+  function filterRooms() {
+    let risk = 0;
+    symptomCheckboxes.forEach(cb => {
+      if (cb.checked) {
+        risk += symptomRiskMap[cb.value] || 0;
+      }
+    });
+
+    const highRiskThreshold = 5;
+
+    for (let option of roomSelect.options) {
+      if (!option.value) continue; // skip placeholder
+
+      const isIsolation = option.getAttribute('data-isolation') === 'true';
+
+      if (risk > highRiskThreshold) {
+        // High risk: show isolation rooms only
+        option.style.display = isIsolation ? 'block' : 'none';
+      } else {
+        // Low risk: show non-isolation rooms only
+        option.style.display = isIsolation ? 'none' : 'block';
+      }
+    }
+  }
+
+  symptomCheckboxes.forEach(cb => cb.addEventListener('change', filterRooms));
+
+  // Initial filtering on page load
+  filterRooms();
+</script>
 
 <%- include("../partials/footer") %>

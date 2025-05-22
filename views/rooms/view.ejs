@@ -23,7 +23,7 @@
   <label>Select Patient:
     <select name="patientId" required>
       <% patients.forEach(patient => { %>
-        <option value="<%= patient._id %>"><%= patient.firstName %> <%= patient.surname %></option>
+        <option value="<%= patient._id % %>"><%= patient.firstName %> <%= patient.surname %></option>
       <% }) %>
     </select>
   </label>

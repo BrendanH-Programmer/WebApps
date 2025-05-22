@@ -12,15 +12,19 @@ exports.index = async (req, res) => {
   }
 };
 
-// Show single room details
 exports.show = async (req, res) => {
   try {
-    const room = await Room.findById(req.params.id).populate("currentPatients");
-    if (!room) return res.status(404).send("Room not found");
-    res.render("rooms/view", { room, user: req.session.user });
+    const room = await Room.findById(req.params.id).populate('currentPatients');
+    const patients = await Patient.find();  // fetch all patients
+
+    if (!room) {
+      return res.status(404).send('Room not found');
+    }
+
+    res.render('rooms/view', { room, patients, user: req.session.user });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error retrieving room details");
+    res.status(500).send('Error retrieving room details');
   }
 };
 

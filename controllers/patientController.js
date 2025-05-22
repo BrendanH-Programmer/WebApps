@@ -53,11 +53,11 @@ exports.create = async (req, res) => {
       surname: capitalize(req.body.surname),
       gender: req.body.gender,
       dateOfBirth: req.body.dateOfBirth,
-      address: req.body.address,
+      address: capitalize(req.body.address),
       phoneNumber: req.body.phoneNumber,
       emergencyContact: {
-        name: req.body.emergencyContactName,
-        relationship: req.body.emergencyContactRelationship,
+        name: capitalize(req.body.emergencyContactName),
+        relationship: capitalize(req.body.emergencyContactRelationship),
         phone: req.body.emergencyContactPhone,
       },
       symptoms: selectedSymptoms,
@@ -101,11 +101,11 @@ exports.update = async (req, res) => {
       surname: capitalize(req.body.surname),
       gender: req.body.gender,
       dateOfBirth: req.body.dateOfBirth,
-      address: req.body.address,
+      address: capitalize(req.body.address),
       phoneNumber: req.body.phoneNumber,
       emergencyContact: {
-        name: req.body.emergencyContactName,
-        relationship: req.body.emergencyContactRelationship,
+        name: capitalize(req.body.emergencyContactName),
+        relationship: capitalize(req.body.emergencyContactRelationship),
         phone: req.body.emergencyContactPhone,
       },
       symptoms: selectedSymptoms,
@@ -153,5 +153,11 @@ exports.show = async (req, res) => {
 
 // Capitalize string
 function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  return str
+    .split(' ')
+    .map(word => {
+      if (word.length === 0) return ''; // handle empty strings
+      return word[0].toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(' ');
 }

@@ -5,7 +5,7 @@ const { isAuthenticated, allowRoles, isAdmin } = require("../utils/authMiddlewar
 
 router.get("/", isAuthenticated, allowRoles(["admin", "nurse"]), roomController.index);
 router.get("/new", isAuthenticated, allowRoles(["admin"]), roomController.new);
-router.post("/", isAuthenticated, allowRoles(["admin"]), roomController.create);
+router.post("/", isAuthenticated, allowRoles(["admin"]), roomController.createRoom);
 router.get("/:id", isAuthenticated, allowRoles(["admin", "nurse"]), roomController.show);
 router.get("/:id/edit", isAuthenticated, allowRoles(["admin"]), roomController.edit);
 router.put("/:id", isAuthenticated, allowRoles(["admin"]), roomController.update);

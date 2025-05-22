@@ -30,7 +30,7 @@ exports.new = (req, res) => {
 };
 
 // Create new room
-exports.create = async (req, res) => {
+exports.createRoom = async (req, res) => {
   try {
     const newRoom = new Room({
       name: req.body.name.trim(),

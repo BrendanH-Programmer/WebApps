@@ -1,33 +1,61 @@
 <%- include("../partials/header") %>
 
-<h2>Edit Patient</h2>
+<h1>Edit Patient</h1>
+
 <form action="/patients/<%= patient._id %>?_method=PUT" method="POST">
   <label>Title:
     <select name="title" required>
-      <option value="">Select</option>
-      <option value="Mr" <%= patient.title === "Mr" ? "selected" : "" %>>Mr</option>
-      <option value="Mrs" <%= patient.title === "Mrs" ? "selected" : "" %>>Mrs</option>
-      <option value="Miss" <%= patient.title === "Miss" ? "selected" : "" %>>Miss</option>
-      <option value="Ms" <%= patient.title === "Ms" ? "selected" : "" %>>Ms</option>
-      <option value="Dr" <%= patient.title === "Dr" ? "selected" : "" %>>Dr</option>
-      <option value="Prof" <%= patient.title === "Prof" ? "selected" : "" %>>Prof</option>
+      <% ["Mr", "Mrs", "Miss", "Ms", "Dr", "Prof"].forEach(opt => { %>
+        <option value="<%= opt %>" <%= patient.title === opt ? "selected" : "" %>><%= opt %></option>
+      <% }) %>
     </select>
   </label>
 
-  <label>First Name: <input type="text" name="firstName" value="<%= patient.firstName %>" required></label>
-  <label>Surname: <input type="text" name="surname" value="<%= patient.surname %>" required></label>
+  <label>First Name:
+    <input type="text" name="firstName" value="<%= patient.firstName %>" required>
+  </label>
+
+  <label>Surname:
+    <input type="text" name="surname" value="<%= patient.surname %>" required>
+  </label>
+
+  <label>Gender:
+    <select name="gender" required>
+      <% ["Male", "Female", "Other", "Prefer not to say"].forEach(opt => { %>
+        <option value="<%= opt %>" <%= patient.gender === opt ? "selected" : "" %>><%= opt %></option>
+      <% }) %>
+    </select>
+  </label>
 
   <label>Date of Birth:
-    <input type="date" name="dateOfBirth" value="<%= patient.dateOfBirth.toISOString().split('T')[0] %>" required
-           max="<%= new Date().toISOString().split('T')[0] %>">
+    <input type="date" name="dateOfBirth" value="<%= patient.dateOfBirth.toISOString().split('T')[0] %>" required>
+  </label>
+
+  <label>Address:
+    <input type="text" name="address" value="<%= patient.address || '' %>">
+  </label>
+
+  <label>Phone Number:
+    <input type="tel" name="phoneNumber" value="<%= patient.phoneNumber || '' %>">
   </label>
 
   <fieldset>
-    <legend>Select Symptoms</legend>
+    <legend>Emergency Contact</legend>
+      <label>Name: <input type="text" name="emergencyContactName" value="<%= patient.emergencyContact?.name || '' %>"></label>
+      <label>Relationship: <input type="text" name="emergencyContactRelationship" value="<%= patient.emergencyContact?.relationship || '' %>"></label>
+      <label>Phone: <input type="tel" name="emergencyContactPhone" value="<%= patient.emergencyContact?.phone || '' %>"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Symptoms</legend>
     <% symptomList.forEach(symptom => { %>
       <label>
-        <input type="checkbox" name="symptoms" value="<%= symptom.name %>"
-          <%= patient.symptoms.includes(symptom.name) ? 'checked' : '' %>>
+        <input 
+          type="checkbox" 
+          name="symptoms" 
+          value="<%= symptom.name %>" 
+          <%= patient.symptoms.includes(symptom.name) ? "checked" : "" %>
+        >
         <%= symptom.name %> (Risk: <%= symptom.riskValue %>)
       </label><br>
     <% }) %>

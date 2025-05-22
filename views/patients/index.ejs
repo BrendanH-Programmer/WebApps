@@ -1,43 +1,44 @@
 <%- include("../partials/header") %>
 
-<a href="/patients/new">Add New Patient</a>
+<h1>All Patients</h1>
+
 <table>
   <thead>
     <tr>
-      <th>Title</th>
-      <th>First Name</th>
-      <th>Surname</th>
+      <th>Name</th>
+      <th>DOB</th>
       <th>Age</th>
-      <th>Symptoms</th>
-      <th>Infection Risk</th>
+      <th>Gender</th>
+      <th>Risk</th>
       <th>Room</th>
+      <th>NHS #</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
-    <% patients.forEach(patient => { 
-      const birthDate = new Date(patient.dateOfBirth);
-      const ageDifMs = Date.now() - birthDate.getTime();
-      const ageDate = new Date(ageDifMs); // miliseconds from epoch
-      const age = Math.abs(ageDate.getUTCFullYear() - 1970);
-    %>
+    <% patients.forEach(patient => { %>
       <tr>
-        <td><%= patient.title %></td>
-        <td><a href="/patients/<%= patient._id %>"><%= patient.firstName %></a></td>
-        <td><a href="/patients/<%= patient._id %>"><%= patient.surname %></a></td>
-        <td><%= age %></td>
-        <td><%= patient.symptoms.join(", ") %></td>
+        <td><%= patient.title %> <%= patient.firstName %> <%= patient.surname %></td>
+        <td><%= new Date(patient.dateOfBirth).toLocaleDateString() %></td>
+        <td><%= patient.age %></td>
+        <td><%= patient.gender %></td>
         <td><%= patient.infectionRisk %></td>
         <td><%= patient.roomAssigned ? patient.roomAssigned.name : "Unassigned" %></td>
+        <td><%= patient.nhsNumber %></td>
         <td>
+          <a href="/patients/<%= patient._id %>">View</a> |
           <a href="/patients/<%= patient._id %>/edit">Edit</a>
-          <form action="/patients/<%= patient._id %>?_method=DELETE" method="POST" style="display:inline;">
-            <button type="submit">Delete</button>
-          </form>
+          <% if (user.role === 'admin') { %>
+            | <form action="/patients/<%= patient._id %>?_method=DELETE" method="POST" style="display:inline;">
+              <button type="submit" onclick="return confirm('Delete this patient?')">Delete</button>
+            </form>
+          <% } %>
         </td>
       </tr>
     <% }) %>
   </tbody>
 </table>
+
+<a href="/patients/new">+ Add Patient</a>
 
 <%- include("../partials/footer") %>

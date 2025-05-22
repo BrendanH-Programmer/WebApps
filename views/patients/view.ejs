@@ -1,30 +1,29 @@
 <%- include("../partials/header") %>
 
-<h2>Patient Details</h2>
+<h1>Patient Details</h1>
 
-<p><strong>Title:</strong> <%= patient.title %></p>
-<p><strong>First Name:</strong> <%= patient.firstName %></p>
-<p><strong>Surname:</strong> <%= patient.surname %></p>
-<p><strong>Date of Birth:</strong> <%= patient.dateOfBirth.toISOString().split('T')[0] %></p>
-<p><strong>Age:</strong> 
-  <% 
-    const birthDate = new Date(patient.dateOfBirth);
-    const ageDifMs = Date.now() - birthDate.getTime();
-    const ageDate = new Date(ageDifMs);
-    const age = Math.abs(ageDate.getUTCFullYear() - 1970);
-  %>
-  <%= age %>
+<p><strong>Full Name:</strong> <%= patient.title %> <%= patient.firstName %> <%= patient.surname %></p>
+<p><strong>Gender:</strong> <%= patient.gender %></p>
+<p><strong>Date of Birth:</strong> <%= new Date(patient.dateOfBirth).toLocaleDateString() %> (<%= patient.age %> years)</p>
+<p><strong>Address:</strong> <%= patient.address || 'N/A' %></p>
+<p><strong>Phone Number:</strong> <%= patient.phoneNumber || 'N/A' %></p>
+<p><strong>Emergency Contact:</strong></p>
+<ul>
+  <li><strong>Name:</strong> <%= patient.emergencyContact?.name || 'N/A' %></li>
+  <li><strong>Relationship:</strong> <%= patient.emergencyContact?.relationship || 'N/A' %></li>
+  <li><strong>Phone:</strong> <%= patient.emergencyContact?.phone || 'N/A' %></li>
+</ul>
+<p><strong>Symptoms:</strong>
+  <ul>
+    <% patient.symptoms.forEach(symptom => { %>
+      <li><%= symptom %></li>
+    <% }) %>
+  </ul>
 </p>
-<p><strong>Symptoms:</strong> <%= patient.symptoms.join(", ") %></p>
 <p><strong>Infection Risk:</strong> <%= patient.infectionRisk %></p>
-<p><strong>Room Assigned:</strong> <%= patient.roomAssigned ? patient.roomAssigned.name : "Unassigned" %></p>
+<p><strong>Room Assigned:</strong> <%= patient.roomAssigned ? patient.roomAssigned.name : "Not Assigned" %></p>
+<p><strong>NHS Number:</strong> <%= patient.nhsNumber %></p>
 
-<a href="/patients/<%= patient._id %>/edit">Edit Patient</a> |
-<form action="/patients/<%= patient._id %>?_method=DELETE" method="POST" style="display:inline;">
-  <button type="submit" style="background:none; border:none; padding:0; color:#007bff; cursor:pointer; font-size:1em; text-decoration:underline;">
-    Delete
-  </button>
-</form>
-<a href="/patients">Back to Patient List</a>
+<a href="/patients">Back to List</a> | <a href="/patients/<%= patient._id %>/edit">Edit</a>
 
 <%- include("../partials/footer") %>

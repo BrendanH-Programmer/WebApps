@@ -1,6 +1,7 @@
 <%- include("../partials/header") %>
 
-<h2>Add New Patient</h2>
+<h1>New Patient</h1>
+
 <form action="/patients" method="POST">
   <label>Title:
     <select name="title" required>
@@ -14,18 +15,48 @@
     </select>
   </label>
 
-  <label>First Name: <input type="text" name="firstName" required></label>
-  <label>Surname: <input type="text" name="surname" required></label>
+  <label>First Name:
+    <input type="text" name="firstName" required>
+  </label>
 
-  <label>Date of Birth: 
-    <input type="date" name="dateOfBirth" required max="<%= new Date().toISOString().split('T')[0] %>">
+  <label>Surname:
+    <input type="text" name="surname" required>
+  </label>
+
+  <label>Gender:
+    <select name="gender" required>
+      <option value="">Select</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+      <option>Prefer not to say</option>
+    </select>
+  </label>
+
+  <label>Date of Birth:
+    <input type="date" name="dateOfBirth" required>
+  </label>
+
+  <label>Address:
+    <input type="text" name="address">
+  </label>
+
+  <label>Phone Number:
+    <input type="tel" name="phoneNumber">
   </label>
 
   <fieldset>
-    <legend>Select Symptoms</legend>
+    <legend>Emergency Contact</legend>
+      <label>Name: <input type="text" name="emergencyContactName"></label>
+      <label>Relationship: <input type="text" name="emergencyContactRelationship"></label>
+      <label>Phone: <input type="tel" name="emergencyContactPhone"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Symptoms</legend>
     <% symptomList.forEach(symptom => { %>
       <label>
-        <input type="checkbox" name="symptoms" value="<%= symptom.name %>"> 
+        <input type="checkbox" name="symptoms" value="<%= symptom.name %>">
         <%= symptom.name %> (Risk: <%= symptom.riskValue %>)
       </label><br>
     <% }) %>

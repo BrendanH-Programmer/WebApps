@@ -5,29 +5,44 @@ const { assignRoomToPatient } = require("../utils/roomAssigner");
 
 // List all patients
 exports.index = async (req, res) => {
-  const patients = await Patient.find().populate("roomAssigned");
-  res.render("patients/index", { patients, user: req.session.user });
+  try {
+    const patients = await Patient.find().populate("roomAssigned");
+    res.render("patients/index", { patients, user: req.session.user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error retrieving patients");
+  }
 };
 
-// Render new patient form with symptoms from DB
+// Render new patient form
 exports.new = async (req, res) => {
-  const symptomList = await Symptom.find();
-  res.render("patients/new", { symptomList, user: req.session.user });
+  try {
+    const symptomList = await Symptom.find();
+    res.render("patients/new", { symptomList, user: req.session.user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading form");
+  }
 };
 
-// Render edit form with symptoms from DB
+// Render edit form
 exports.edit = async (req, res) => {
-  const patient = await Patient.findById(req.params.id);
-  const symptomList = await Symptom.find();
-  res.render("patients/edit", { patient, symptomList, user: req.session.user });
+  try {
+    const patient = await Patient.findById(req.params.id);
+    const symptomList = await Symptom.find();
+    res.render("patients/edit", { patient, symptomList, user: req.session.user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading edit form");
+  }
 };
 
-// Create a new patient and assign room
+// Create new patient and assign room
 exports.create = async (req, res) => {
   try {
     const selectedSymptoms = Array.isArray(req.body.symptoms)
       ? req.body.symptoms
-      : [req.body.symptoms];
+      : req.body.symptoms ? [req.body.symptoms] : [];
 
     const symptomsData = await Symptom.find({ name: { $in: selectedSymptoms } });
     const infectionRisk = symptomsData.reduce((sum, s) => sum + s.riskValue, 0);
@@ -36,12 +51,22 @@ exports.create = async (req, res) => {
       title: req.body.title,
       firstName: capitalize(req.body.firstName),
       surname: capitalize(req.body.surname),
+      gender: req.body.gender,
       dateOfBirth: req.body.dateOfBirth,
+      address: req.body.address,
+      phoneNumber: req.body.phoneNumber,
+      emergencyContact: {
+        name: req.body.emergencyContactName,
+        relationship: req.body.emergencyContactRelationship,
+        phone: req.body.emergencyContactPhone,
+      },
       symptoms: selectedSymptoms,
       infectionRisk
     });
 
+
     const assignedRoom = await assignRoomToPatient(newPatient);
+
     if (assignedRoom) {
       newPatient.roomAssigned = assignedRoom._id;
       await newPatient.save();
@@ -51,8 +76,8 @@ exports.create = async (req, res) => {
 
       res.redirect("/patients");
     } else {
-      await newPatient.save(); // Save even if unassigned
-      res.send("No suitable room available. Patient added without assignment.");
+      await newPatient.save(); // Save unassigned
+      res.send("No suitable room available. Patient added without room assignment.");
     }
   } catch (err) {
     console.error(err);
@@ -60,21 +85,29 @@ exports.create = async (req, res) => {
   }
 };
 
-// Update patient info (recalculate infection risk if symptoms changed)
+// Update patient info and recalculate infection risk
 exports.update = async (req, res) => {
   try {
     const selectedSymptoms = Array.isArray(req.body.symptoms)
       ? req.body.symptoms
-      : [req.body.symptoms];
+      : req.body.symptoms ? [req.body.symptoms] : [];
 
     const symptomsData = await Symptom.find({ name: { $in: selectedSymptoms } });
     const infectionRisk = symptomsData.reduce((sum, s) => sum + s.riskValue, 0);
 
     await Patient.findByIdAndUpdate(req.params.id, {
       title: req.body.title,
-      firstName: req.body.firstName,
-      surname: req.body.surname,
-      age: req.body.age,
+      firstName: capitalize(req.body.firstName),
+      surname: capitalize(req.body.surname),
+      gender: req.body.gender,
+      dateOfBirth: req.body.dateOfBirth,
+      address: req.body.address,
+      phoneNumber: req.body.phoneNumber,
+      emergencyContact: {
+        name: req.body.emergencyContactName,
+        relationship: req.body.emergencyContactRelationship,
+        phone: req.body.emergencyContactPhone,
+      },
       symptoms: selectedSymptoms,
       infectionRisk
     });
@@ -86,14 +119,16 @@ exports.update = async (req, res) => {
   }
 };
 
-// Delete patient and remove from assigned room's patient list
+// Delete patient and remove from room
 exports.remove = async (req, res) => {
   try {
     const patient = await Patient.findById(req.params.id);
     if (patient && patient.roomAssigned) {
       const room = await Room.findById(patient.roomAssigned);
-      room.currentPatients.pull(patient._id);
-      await room.save();
+      if (room) {
+        room.currentPatients.pull(patient._id);
+        await room.save();
+      }
     }
 
     await Patient.findByIdAndDelete(req.params.id);
@@ -104,13 +139,11 @@ exports.remove = async (req, res) => {
   }
 };
 
-// Show single patient details
+// View patient details
 exports.show = async (req, res) => {
   try {
     const patient = await Patient.findById(req.params.id).populate("roomAssigned");
-    if (!patient) {
-      return res.status(404).send("Patient not found");
-    }
+    if (!patient) return res.status(404).send("Patient not found");
     res.render("patients/view", { patient, user: req.session.user });
   } catch (err) {
     console.error(err);
@@ -118,19 +151,7 @@ exports.show = async (req, res) => {
   }
 };
 
-// Helper function to calculate age from DOB
-function calculateAge(dob) {
-  const today = new Date();
-  const birthDate = new Date(dob);
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  return age;
-}
-
-// Helper to capitalize names properly
+// Capitalize string
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }

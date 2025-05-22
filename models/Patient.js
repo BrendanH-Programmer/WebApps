@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 
 const patientSchema = new mongoose.Schema({
   title: {
@@ -15,6 +16,11 @@ const patientSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  gender: {
+    type: String,
+    enum: ["Male", "Female", "Other", "Prefer not to say"],
+    required: true,
+  },
   dateOfBirth: {
     type: Date,
     required: true,
@@ -26,9 +32,30 @@ const patientSchema = new mongoose.Schema({
       message: "Date of birth must be in the past and after 1900",
     },
   },
+  address: {
+    type: String,
+    trim: true,
+  },
+  phoneNumber: {
+    type: String,
+    trim: true,
+  },
+  emergencyContact: {
+    name: String,
+    relationship: String,
+    phone: String,
+  },
   symptoms: [String],
   infectionRisk: Number,
-  roomAssigned: { type: mongoose.Schema.Types.ObjectId, ref: "Room" },
+  roomAssigned: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Room",
+  },
+  nhsNumber: {
+    type: String,
+    unique: true,
+    immutable: true,
+  }
 });
 
 // Virtual property to get age
@@ -41,6 +68,20 @@ patientSchema.virtual("age").get(function () {
     age--;
   }
   return age;
+});
+
+// Deterministic NHS number generator using hash of name + dob
+function generateNHSNumber(firstName, surname, dob) {
+  const base = `${firstName.toLowerCase()}-${surname.toLowerCase()}-${dob.toISOString().split('T')[0]}`;
+  return "NHS-" + crypto.createHash("sha256").update(base).digest("hex").slice(0, 10).toUpperCase();
+}
+
+// Pre-save hook to assign NHS number if not already set
+patientSchema.pre("save", function (next) {
+  if (!this.nhsNumber) {
+    this.nhsNumber = generateNHSNumber(this.firstName, this.surname, this.dateOfBirth);
+  }
+  next();
 });
 
 patientSchema.set("toJSON", { virtuals: true });

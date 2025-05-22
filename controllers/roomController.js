@@ -15,13 +15,13 @@ exports.index = async (req, res) => {
 exports.show = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id).populate('currentPatients');
-    const patients = await Patient.find();  // fetch all patients
 
     if (!room) {
       return res.status(404).send('Room not found');
     }
 
-    res.render('rooms/view', { room, patients, user: req.session.user });
+    // Pass only patients assigned to this room:
+    res.render('rooms/view', { room, patients: room.currentPatients, user: req.session.user });
   } catch (err) {
     console.error(err);
     res.status(500).send('Error retrieving room details');

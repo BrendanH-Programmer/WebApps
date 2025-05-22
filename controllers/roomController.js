@@ -7,24 +7,24 @@ exports.index = async (req, res) => {
     const rooms = await Room.find().populate("currentPatients");
     res.render("rooms/index", { rooms, user: req.session.user });
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error fetching rooms");
   }
 };
 
+// Show a specific room
 exports.show = async (req, res) => {
   try {
-    const room = await Room.findById(req.params.id).populate('currentPatients');
-
+    const room = await Room.findById(req.params.id).populate("currentPatients");
     if (!room) {
-      return res.status(404).send('Room not found');
+      return res.status(404).send("Room not found");
     }
-
-    // Pass only patients assigned to this room:
-    res.render('rooms/view', { room, patients: room.currentPatients, user: req.session.user });
+    res.render("rooms/view", {
+      room,
+      patients: room.currentPatients,
+      user: req.session.user,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Error retrieving room details');
+    res.status(500).send("Error retrieving room details");
   }
 };
 
@@ -33,7 +33,7 @@ exports.new = (req, res) => {
   res.render("rooms/new", { user: req.session.user });
 };
 
-// Create new room
+// Create a new room
 exports.createRoom = async (req, res) => {
   try {
     const newRoom = new Room({
@@ -43,26 +43,27 @@ exports.createRoom = async (req, res) => {
       isIsolation: req.body.isIsolation === "on",
     });
     await newRoom.save();
+
     res.redirect("/rooms");
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error creating room");
   }
 };
 
-// Render edit room form
+// Render edit form for a room
 exports.edit = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id);
-    if (!room) return res.status(404).send("Room not found");
+    if (!room) {
+      return res.status(404).send("Room not found");
+    }
     res.render("rooms/edit", { room, user: req.session.user });
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error retrieving room for edit");
   }
 };
 
-// Update room
+// Update a room
 exports.update = async (req, res) => {
   try {
     const updatedData = {
@@ -72,30 +73,32 @@ exports.update = async (req, res) => {
       isIsolation: req.body.isIsolation === "on",
     };
 
-    await Room.findByIdAndUpdate(req.params.id, updatedData);
+    const updatedRoom = await Room.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+
     res.redirect("/rooms");
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error updating room");
   }
 };
 
-// Delete room
+// Delete a room
 exports.remove = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id);
-    if (!room) return res.status(404).send("Room not found");
+    if (!room) {
+      return res.status(404).send("Room not found");
+    }
 
-    // Remove roomAssigned reference from all patients currently assigned here
+    // Unassign room from all patients
     await Patient.updateMany(
       { roomAssigned: room._id },
       { $unset: { roomAssigned: "" } }
     );
 
-    await Room.findByIdAndDelete(req.params.id);
+    await Room.findByIdAndDelete(room._id);
+
     res.redirect("/rooms");
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error deleting room");
   }
 };

@@ -13,7 +13,7 @@ router.post("/login", authController.login);
 
 
 // Protected routes
-router.post("/rooms", isAuthenticated, isAdmin, roomController.create);
+router.post("/rooms", isAuthenticated, isAdmin, roomController.createRoom);
 router.get("/patients", isAuthenticated, allowRoles(["admin", "nurse"]), patientController.index);
 
 module.exports = router;

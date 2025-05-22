@@ -1,0 +1,16 @@
+<%- include("../partials/header") %>
+
+<h2>Edit Room - <%= room.name %></h2>
+
+<form action="/rooms/<%= room._id %>?_method=PUT" method="POST">
+  <label>Name: <input type="text" name="name" value="<%= room.name %>" required></label><br>
+  <label>Capacity: <input type="number" name="capacity" value="<%= room.capacity %>" required></label><br>
+  <label>Isolation Room: 
+    <input type="checkbox" name="isIsolation" <%= room.isIsolation ? "checked" : "" %>>
+  </label><br>
+  <button type="submit">Update Room</button>
+</form>
+
+<a href="/rooms">Back to Rooms</a>
+
+<%- include("../partials/footer") %>

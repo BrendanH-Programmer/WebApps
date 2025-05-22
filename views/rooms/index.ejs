@@ -1,41 +1,40 @@
 <%- include("../partials/header") %>
 
 <h2>All Rooms</h2>
+
+<% if (user && user.role === "admin") { %>
+  <a href="/rooms/new">+ Add New Room</a>
+<% } %>
+
 <table>
   <thead>
     <tr>
-      <th>Room Number</th>
+      <th>Name</th>
       <th>Capacity</th>
       <th>Current Patients</th>
       <th>Isolation</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     <% rooms.forEach(room => { %>
       <tr>
-        <td><%= room.name %></td>
+        <td><a href="/rooms/<%= room._id %>"><%= room.name %></a></td>
         <td><%= room.capacity %></td>
+        <td><%= room.currentPatients.length %></td>
+        <td><%= room.isIsolation ? "Yes" : "No" %></td>
         <td>
-          <% if (room.currentPatients.length === 0) { %>
-            None
-          <% } else { %>
-            <ul>
-              <% room.currentPatients.forEach(p => { %>
-                <li><%= p.name %></li>
-              <% }) %>
-            </ul>
+          <% if (user && user.role === "admin") { %>
+            <a href="/rooms/<%= room._id %>/edit">Edit</a> |
+            <form action="/rooms/<%= room._id %>?_method=DELETE" method="POST" style="display:inline;">
+              <button type="submit">Delete</button>
+            </form>
           <% } %>
         </td>
-        <td>
-          <% if (room.isIsolation) { %>
-            Yes
-          <% } else { %>
-            No
-          <% } %>
-        </td> 
       </tr>
     <% }) %>
   </tbody>
 </table>
+
 
 <%- include("../partials/footer") %>

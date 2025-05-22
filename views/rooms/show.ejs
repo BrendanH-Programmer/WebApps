@@ -1,0 +1,33 @@
+<%- include("../partials/header") %>
+
+<h2>Room: <%= room.name %></h2>
+
+<p><strong>Capacity:</strong> <%= room.capacity %></p>
+<p><strong>Isolation Room:</strong> <%= room.isIsolation ? "Yes" : "No" %></p>
+<p><strong>Current Patients:</strong> <%= room.currentPatients.length %> / <%= room.capacity %></p>
+
+<% if (room.currentPatients.length > 0) { %>
+  <ul>
+    <% room.currentPatients.forEach(patient => { %>
+      <li><a href="/patients/<%= patient._id %>"><%= patient.firstName %> <%= patient.surname %></a></li>
+    <% }) %>
+  </ul>
+<% } else { %>
+  <p>No patients currently assigned.</p>
+<% } %>
+
+<hr>
+
+<h3>Assign Patient to Room</h3>
+<form action="/rooms/<%= room._id %>/assign" method="POST">
+  <label>Select Patient:
+    <select name="patientId" required>
+      <% patients.forEach(patient => { %>
+        <option value="<%= patient._id %>"><%= patient.firstName %> <%= patient.surname %></option>
+      <% }) %>
+    </select>
+  </label>
+  <button type="submit">Assign</button>
+</form>
+
+<%- include("../partials/footer") %>

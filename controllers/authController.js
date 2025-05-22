@@ -35,7 +35,7 @@ exports.login = async (req, res) => {
       role: user.role,
     };
 
-    res.redirect("/rooms");
+    res.redirect("/homepage");
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).send("Login failed");

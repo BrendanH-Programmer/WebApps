@@ -6,7 +6,9 @@
   <title>Hospital Dashboard</title>
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet" href="/css/style.css">
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -23,25 +25,80 @@
 
   <main class="container my-5">
     <h1 class="mb-4">Welcome, <%= user.username %></h1>
-    <p class="lead">Select an action below:</p>
+    <p class="lead mb-4">Select an action below or view current stats:</p>
 
-    <div class="row g-4">
-      <div class="col-md-4">
-        <a href="/patients/new" class="btn btn-lg btn-success w-100">
-          + Add New Patient
-        </a>
+    <!-- Stats cards -->
+    <div class="row row-cols-1 row-cols-md-4 g-4 mb-5">
+      <div class="col">
+        <div class="card text-center h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Total Patients Today</h5>
+            <p class="display-5 text-success"><%= stats.totalPatientsToday ?? 0 %></p>
+          </div>
+        </div>
       </div>
-      <div class="col-md-4">
-        <a href="/patients" class="btn btn-lg btn-primary w-100">
-          View All Patients
-        </a>
+      <div class="col">
+        <div class="card text-center h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Available Rooms</h5>
+            <p class="display-5 text-primary"><%= stats.availableRooms ?? 0 %></p>
+          </div>
+        </div>
       </div>
-      <div class="col-md-4">
-        <a href="/rooms" class="btn btn-lg btn-info w-100">
-          View All Rooms
-        </a>
+      <div class="col">
+        <div class="card text-center h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Isolation Rooms Available</h5>
+            <p class="display-5 text-info"><%= stats.isolationRoomsAvailable ?? 0 %></p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card text-center h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Patients in Isolation</h5>
+            <p class="display-5 text-danger"><%= stats.patientsInIsolation ?? 0 %></p>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Quick Search -->
+    <section class="mb-5">
+      <h2 class="mb-3">Find Patient</h2>
+      <form action="/patients/search" method="GET" class="d-flex" role="search">
+        <input
+          class="form-control me-2"
+          type="search"
+          name="query"
+          placeholder="Enter name, ID or room"
+          aria-label="Search"
+          required
+        />
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+      </form>
+    </section>
+
+    <!-- Quick Links -->
+    <section>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <a href="/patients/new" class="btn btn-lg btn-success w-100">
+            + Add New Patient
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a href="/patients" class="btn btn-lg btn-primary w-100">
+            View All Patients
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a href="/rooms" class="btn btn-lg btn-info w-100">
+            View All Rooms
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script

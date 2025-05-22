@@ -12,9 +12,8 @@ router.get("/login", (req, res) => res.render("login"));
 router.post("/login", authController.login);
 
 // Homepage/dashboard (protected)
-// Homepage/dashboard (protected)
 router.get("/homepage", isAuthenticated, (req, res) => {
-  res.render("homepage", { user: req.session.user });
+  res.render("homepage", { user: req.session.user, stats: { totalPatientsToday: 42 /* or from DB */ } });
 });
 
 

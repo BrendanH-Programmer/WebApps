@@ -7,6 +7,7 @@ exports.index = async (req, res) => {
     const rooms = await Room.find().populate("currentPatients");
     res.render("rooms/index", { rooms, user: req.session.user });
   } catch (err) {
+    console.error(err);
     res.status(500).send("Error fetching rooms");
   }
 };
@@ -24,6 +25,7 @@ exports.show = async (req, res) => {
       user: req.session.user,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).send("Error retrieving room details");
   }
 };
@@ -46,6 +48,7 @@ exports.createRoom = async (req, res) => {
 
     res.redirect("/rooms");
   } catch (err) {
+    console.error(err);
     res.status(500).send("Error creating room");
   }
 };
@@ -59,6 +62,7 @@ exports.edit = async (req, res) => {
     }
     res.render("rooms/edit", { room, user: req.session.user });
   } catch (err) {
+    console.error(err);
     res.status(500).send("Error retrieving room for edit");
   }
 };
@@ -77,6 +81,7 @@ exports.update = async (req, res) => {
 
     res.redirect("/rooms");
   } catch (err) {
+    console.error(err);
     res.status(500).send("Error updating room");
   }
 };
@@ -99,6 +104,7 @@ exports.remove = async (req, res) => {
 
     res.redirect("/rooms");
   } catch (err) {
+    console.error(err);
     res.status(500).send("Error deleting room");
   }
 };

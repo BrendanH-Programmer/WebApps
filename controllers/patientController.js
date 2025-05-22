@@ -244,3 +244,29 @@ exports.show = async (req, res) => {
     res.status(500).send("Error retrieving patient details");
   }
 };
+
+
+// Get total patients admitted today
+exports.getTotalPatientsToday = async () => {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  try {
+    const count = await Patient.countDocuments({ createdAt: { $gte: startOfDay } });
+    return count;
+  } catch (err) {
+    console.error("Error getting total patients today:", err);
+    throw err;
+  }
+};
+
+// Get number of patients currently in isolation (infectionRisk >= 5)
+exports.getPatientsInIsolation = async () => {
+  try {
+    const count = await Patient.countDocuments({ infectionRisk: { $gte: 5 } });
+    return count;
+  } catch (err) {
+    console.error("Error getting patients in isolation:", err);
+    throw err;
+  }
+};

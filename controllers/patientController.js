@@ -246,16 +246,13 @@ exports.show = async (req, res) => {
 };
 
 
-// Get total patients admitted today
-exports.getTotalPatientsToday = async () => {
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
-
+// Get total number of patients in the database
+exports.getTotalPatients = async () => {
   try {
-    const count = await Patient.countDocuments({ createdAt: { $gte: startOfDay } });
+    const count = await Patient.countDocuments(); // No filter — returns all patients
     return count;
   } catch (err) {
-    console.error("Error getting total patients today:", err);
+    console.error("Error getting total patients:", err);
     throw err;
   }
 };

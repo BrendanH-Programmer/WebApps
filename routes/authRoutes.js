@@ -4,6 +4,7 @@ const authController = require("../controllers/authController");
 const roomController = require("../controllers/roomController");
 const patientController = require("../controllers/patientController");
 const { isAuthenticated, isAdmin, allowRoles } = require("../utils/authMiddleware");
+const { getTotalPatients } = require("../controllers/patientController");
 
 // Auth routes
 router.get("/register", (req, res) => res.render("register"));
@@ -12,10 +13,20 @@ router.get("/login", (req, res) => res.render("login"));
 router.post("/login", authController.login);
 
 // Homepage/dashboard (protected)
-router.get("/homepage", isAuthenticated, (req, res) => {
-  res.render("homepage", { user: req.session.user, stats: { totalPatientsToday: 42 /* or from DB */ } });
+router.get("/homepage", isAuthenticated, async (req, res) => {
+  try {
+    const totalPatients = await getTotalPatients();
+    res.render("homepage", {
+      user: req.session.user,
+      stats: {
+        totalPatients
+      }
+    });
+  } catch (err) {
+    console.error("Error loading homepage:", err);
+    res.status(500).send("Server error");
+  }
 });
-
 
 // Patients routes
 router.get("/patients", isAuthenticated, allowRoles(["admin", "nurse"]), patientController.index);

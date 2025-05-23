@@ -133,3 +133,32 @@ exports.getAvailableRooms = async () => {
     };
   }
 };
+
+exports.searchRooms = async (query) => {
+  try {
+    const regex = new RegExp(query, "i");
+
+    // Interpret 'true' or 'false' strings to actual booleans
+    let isIsolationFilter = undefined;
+    if (query.toLowerCase() === "true") isIsolationFilter = true;
+    else if (query.toLowerCase() === "false") isIsolationFilter = false;
+
+    const conditions = [
+      { name: regex },
+      { status: regex }
+    ];
+
+    if (typeof isIsolationFilter === "boolean") {
+      conditions.push({ isIsolation: isIsolationFilter });
+    }
+
+    const rooms = await Room.find({
+      $or: conditions
+    });
+
+    return rooms;
+  } catch (err) {
+    console.error("Error searching rooms:", err);
+    return [];
+  }
+};

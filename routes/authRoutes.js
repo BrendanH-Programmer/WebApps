@@ -33,6 +33,30 @@ router.get("/homepage", isAuthenticated, async (req, res) => {
   }
 });
 
+// Search route - protected
+router.get("/search", isAuthenticated, async (req, res) => {
+  const { type, q } = req.query;
+  let results = [];
+
+  try {
+    if (type === "patient") {
+      results = await patientController.searchPatients(q);
+    } else if (type === "room") {
+      results = await roomController.searchRooms(q);
+    }
+
+    res.render("searchResults", {
+      user: req.session.user,
+      results,
+      type,
+      query: q
+    });
+  } catch (err) {
+    console.error("Search error:", err);
+    res.status(500).send("Search failed");
+  }
+});
+
 // Patients routes
 router.get("/patients", isAuthenticated, allowRoles(["admin", "nurse"]), patientController.index);
 router.get("/patients/new", isAuthenticated, allowRoles(["admin", "nurse"]), patientController.new);

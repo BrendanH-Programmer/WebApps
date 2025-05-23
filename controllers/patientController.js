@@ -267,3 +267,23 @@ exports.getPatientsInIsolation = async () => {
     throw err;
   }
 };
+
+exports.searchPatients = async (query) => {
+  try {
+    const regex = new RegExp(query, "i");
+
+    const patients = await Patient.find({
+      $or: [
+        { firstName: regex },
+        { surname: regex },
+        { nhsNumber: regex },
+        { symptoms: { $in: [regex] } }, // match symptoms array
+      ]
+    });
+
+    return patients;
+  } catch (err) {
+    console.error("Error searching patients:", err);
+    return [];
+  }
+};

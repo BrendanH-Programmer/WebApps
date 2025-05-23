@@ -66,17 +66,14 @@
     <!-- Quick Search -->
     <section class="mb-5">
       <h2 class="mb-3">Find Patient</h2>
-      <form action="/patients/search" method="GET" class="d-flex" role="search">
-        <input
-          class="form-control me-2"
-          type="search"
-          name="query"
-          placeholder="Enter name, ID or room"
-          aria-label="Search"
-          required
-        />
-        <button class="btn btn-outline-primary" type="submit">Search</button>
-      </form>
+        <form method="GET" action="/search" class="d-flex">
+          <input class="form-control me-2" type="search" name="q" placeholder="Search patients or rooms" required>
+          <select name="type" class="form-select me-2">
+            <option value="patient">Patients</option>
+            <option value="room">Rooms</option>
+          </select>
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
     </section>
 
     <!-- Quick Links -->

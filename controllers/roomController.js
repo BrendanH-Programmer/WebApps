@@ -108,3 +108,16 @@ exports.remove = async (req, res) => {
     res.status(500).send("Error deleting room");
   }
 };
+
+exports.getAvailableRooms = async () => {
+  try {
+    const rooms = await Room.find({}).populate("currentPatients");
+    const availableRooms = rooms.filter(
+      (room) => room.currentPatients.length < room.capacity
+    );
+    return availableRooms.length;
+  } catch (err) {
+    console.error("Error getting available rooms:", err);
+    return 0;
+  }
+};

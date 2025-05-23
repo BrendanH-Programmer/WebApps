@@ -5,6 +5,7 @@ const roomController = require("../controllers/roomController");
 const patientController = require("../controllers/patientController");
 const { isAuthenticated, isAdmin, allowRoles } = require("../utils/authMiddleware");
 const { getTotalPatients } = require("../controllers/patientController");
+const { getAvailableRooms } = require("../controllers/roomController");
 
 // Auth routes
 router.get("/register", (req, res) => res.render("register"));
@@ -16,10 +17,13 @@ router.post("/login", authController.login);
 router.get("/homepage", isAuthenticated, async (req, res) => {
   try {
     const totalPatients = await getTotalPatients();
+    const availableRooms = await getAvailableRooms();
+
     res.render("homepage", {
       user: req.session.user,
       stats: {
-        totalPatients
+        totalPatients,
+        availableRooms,
       }
     });
   } catch (err) {

@@ -1,7 +1,7 @@
 <%- include("../partials/header") %>
 <link rel="stylesheet" href="/css/style.css">
-<h1>All Patients</h1>
 
+<h1>All Patients</h1>
 <table>
   <thead>
     <tr>
@@ -17,7 +17,7 @@
   </thead>
   <tbody>
     <% patients.forEach(patient => { %>
-      <tr>
+      <tr class="<%= patient.infectionRisk >= 7 ? 'high-risk' : patient.infectionRisk >= 4 ? 'moderate-risk' : 'low-risk' %>">
         <td><%= patient.title %> <%= patient.firstName %> <%= patient.surname %></td>
         <td><%= new Date(patient.dateOfBirth).toLocaleDateString() %></td>
         <td><%= patient.age %></td>
@@ -28,7 +28,7 @@
         <td>
           <a href="/patients/<%= patient._id %>">View</a> |
           <a href="/patients/<%= patient._id %>/edit">Edit</a>
-          <% if (user.role === 'admin') { %>
+          <% if (user && user.role === 'admin') { %>
             | <form action="/patients/<%= patient._id %>?_method=DELETE" method="POST" style="display:inline;">
               <button type="submit" onclick="return confirm('Delete this patient?')">Delete</button>
             </form>

@@ -206,3 +206,38 @@ footer {
     padding: 20px;
   }
 }
+
+/* Rooms */
+.isolation-room {
+  background-color: #f8d7da; /* Light red */
+  border: 2px solid #dc3545; /* Bootstrap danger red */
+  color: #721c24;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.non-isolation-room {
+  background-color: #fff3cd; /* Light yellow */
+  border: 2px solid #ffc107; /* Bootstrap warning yellow */
+  color: #856404;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+/* Patients risk colors */
+.high-risk {
+  background-color: #f8d7da; /* Light red */
+  color: #721c24;
+}
+
+.moderate-risk {
+  background-color: #fff3cd; /* Light yellow */
+  color: #856404;
+}
+
+.low-risk {
+  background-color: #d4edda; /* Light green */
+  color: #155724;
+}

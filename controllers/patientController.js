@@ -61,10 +61,10 @@ exports.edit = async (req, res) => {
     let availableRooms = await Room.find({
       status: "Available",
       $expr: { $lt: [{ $size: "$currentPatients" }, "$capacity"] },
-      isIsolation: infectionRisk >= 5
+      isIsolation: infectionRisk >= 7
     });
 
-    if (infectionRisk < 5) {
+    if (infectionRisk < 7) {
       availableRooms = await Room.find({
         status: "Available",
         $expr: { $lt: [{ $size: "$currentPatients" }, "$capacity"] },
@@ -107,8 +107,8 @@ exports.create = async (req, res) => {
       return res.status(400).send("Selected room is invalid or unavailable.");
     }
 
-    if ((infectionRisk >= 5 && !selectedRoom.isIsolation) ||
-        (infectionRisk < 5 && selectedRoom.isIsolation)) {
+    if ((infectionRisk >= 7 && !selectedRoom.isIsolation) ||
+        (infectionRisk < 7 && selectedRoom.isIsolation)) {
       return res.status(400).send("Room inappropriate for infection risk.");
     }
 
@@ -168,8 +168,8 @@ exports.update = async (req, res) => {
       return res.status(400).send("Room at full capacity.");
     }
 
-    if ((infectionRisk >= 5 && !selectedRoom.isIsolation) ||
-        (infectionRisk < 5 && selectedRoom.isIsolation)) {
+    if ((infectionRisk >= 7 && !selectedRoom.isIsolation) ||
+        (infectionRisk < 7 && selectedRoom.isIsolation)) {
       return res.status(400).send("Room inappropriate for infection risk.");
     }
 
@@ -257,10 +257,10 @@ exports.getTotalPatients = async () => {
   }
 };
 
-// Get number of patients currently in isolation (infectionRisk >= 5)
+// Get number of patients currently in isolation (infectionRisk >= 7)
 exports.getPatientsInIsolation = async () => {
   try {
-    const count = await Patient.countDocuments({ infectionRisk: { $gte: 5 } });
+    const count = await Patient.countDocuments({ infectionRisk: { $gte: 7 } });
     return count;
   } catch (err) {
     console.error("Error getting patients in isolation:", err);

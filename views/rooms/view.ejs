@@ -1,41 +1,42 @@
 <%- include("../partials/header") %>
 <link rel="stylesheet" href="/css/style.css">
-<h1>Room Details</h1>
 
-<div>
-  <h2>Room Number: <%= room.roomNumber %></h2>
-  <p><strong>Isolation Room:</strong> <%= room.isIsolation ? "Yes" : "No" %></p>
-  <p><strong>Capacity:</strong> <%= room.capacity || "N/A" %></p>
-</div>
+<div class="room-card <%= room.isIsolation ? 'isolation-room' : 'non-isolation-room' %>">
+  <h1>Room Details</h1>
+  <div>
+    <h2>Room Number: <%= room.roomNumber %></h2>
+    <p><strong>Isolation Room:</strong> <%= room.isIsolation ? "Yes" : "No" %></p>
+    <p><strong>Capacity:</strong> <%= room.capacity || "N/A" %></p>
+  </div>
 
-<h3>Patients in this room</h3>
+  <h3>Patients in this room</h3>
 
-<% if (patients.length === 0) { %>
-  <p>No patients currently assigned to this room.</p>
-<% } else { %>
-  <table border="1" cellpadding="8">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Date of Birth</th>
-        <th>Gender</th>
-        <th>Contact</th>
-        <!-- Add other patient fields you want here -->
-      </tr>
-    </thead>
-    <tbody>
-      <% patients.forEach(patient => { %>
+  <% if (patients.length === 0) { %>
+    <p>No patients currently assigned to this room.</p>
+  <% } else { %>
+    <table border="1" cellpadding="8">
+      <thead>
         <tr>
-          <td><%= patient.firstName %> <%= patient.surname %></td>
-          <td><%= patient.dateOfBirth ? patient.dateOfBirth.toISOString().split('T')[0] : 'N/A' %></td>
-          <td><%= patient.gender || 'N/A' %></td>
-          <td><%= patient.phoneNumber || 'N/A' %></td>
+          <th>Name</th>
+          <th>Date of Birth</th>
+          <th>Gender</th>
+          <th>Contact</th>
+          <!-- Add other patient fields you want here -->
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
-<% } %>
-
+      </thead>
+      <tbody>
+        <% patients.forEach(patient => { %>
+          <tr>
+            <td><%= patient.firstName %> <%= patient.surname %></td>
+            <td><%= patient.dateOfBirth ? patient.dateOfBirth.toISOString().split('T')[0] : 'N/A' %></td>
+            <td><%= patient.gender || 'N/A' %></td>
+            <td><%= patient.phoneNumber || 'N/A' %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
 <a href="/rooms">Back to Rooms List</a>
 
 <%- include("../partials/footer") %>

@@ -1,40 +1,49 @@
 <%- include("../partials/header") %>
 <link rel="stylesheet" href="/css/style.css">
-<h2>All Rooms</h2>
 
-<% if (user && user.role === "admin") { %>
-  <a href="/rooms/new">+ Add New Room</a>
-<% } %>
+<div class="room-list">
+  <h2>All Rooms</h2> 
+  <% if (user && user.role === "admin") { %>
+    <a href="/rooms/new">+ Add New Room</a>
+  <% } %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Capacity</th>
-      <th>Current Patients</th>
-      <th>Isolation</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% rooms.forEach(room => { %>
+  <%
+    let sortedRooms = rooms.slice().sort((a, b) => {
+      if (a.isIsolation && !b.isIsolation) return -1;
+      if (!a.isIsolation && b.isIsolation) return 1;
+      return a.name.localeCompare(b.name);
+    });
+  %>
+
+  <table>
+    <thead>
       <tr>
-        <td><a href="/rooms/<%= room._id %>"><%= room.name %></a></td>
-        <td><%= room.capacity %></td>
-        <td><%= room.currentPatients.length %></td>
-        <td><%= room.isIsolation ? "Yes" : "No" %></td>
-        <td>
-          <% if (user && user.role === "admin") { %>
-            <a href="/rooms/<%= room._id %>/edit">Edit</a> |
-            <form action="/rooms/<%= room._id %>?_method=DELETE" method="POST" style="display:inline;">
-              <button type="submit">Delete</button>
-            </form>
-          <% } %>
-        </td>
+        <th>Name</th>
+        <th>Capacity</th>
+        <th>Current Patients</th>
+        <th>Isolation</th>
+        <th>Actions</th>
       </tr>
-    <% }) %>
-  </tbody>
-</table>
-
+    </thead>
+    <tbody>
+      <% sortedRooms.forEach(room => { %>
+        <tr class="<%= room.isIsolation ? 'isolation-room' : 'non-isolation-room' %>">
+          <td><a href="/rooms/<%= room._id %>"><%= room.name %></a></td>
+          <td><%= room.capacity %></td>
+          <td><%= room.currentPatients.length %></td>
+          <td><%= room.isIsolation ? "Yes" : "No" %></td>
+          <td>
+            <% if (user && user.role === "admin") { %>
+              <a href="/rooms/<%= room._id %>/edit">Edit</a> |
+              <form action="/rooms/<%= room._id %>?_method=DELETE" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Delete this room?')">Delete</button>
+              </form>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
 
 <%- include("../partials/footer") %>

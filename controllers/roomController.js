@@ -70,6 +70,12 @@ exports.edit = async (req, res) => {
 // Update a room
 exports.update = async (req, res) => {
   try {
+    // Check if any patients assigned to this room
+    const patientsAssigned = await Patient.find({ roomAssigned: req.params.id });
+    if (patientsAssigned.length > 0) {
+      return res.status(400).send("Cannot update room while patients are assigned.");
+    }
+
     const updatedData = {
       name: req.body.name.trim(),
       capacity: Number(req.body.capacity),
@@ -77,8 +83,7 @@ exports.update = async (req, res) => {
       isIsolation: req.body.isIsolation === "on",
     };
 
-    const updatedRoom = await Room.findByIdAndUpdate(req.params.id, updatedData, { new: true });
-
+    await Room.findByIdAndUpdate(req.params.id, updatedData, { new: true });
     res.redirect("/rooms");
   } catch (err) {
     console.error(err);
@@ -94,14 +99,13 @@ exports.remove = async (req, res) => {
       return res.status(404).send("Room not found");
     }
 
-    // Unassign room from all patients
-    await Patient.updateMany(
-      { roomAssigned: room._id },
-      { $unset: { roomAssigned: "" } }
-    );
+    // Check if any patients assigned to this room
+    const patientsAssigned = await Patient.find({ roomAssigned: room._id });
+    if (patientsAssigned.length > 0) {
+      return res.status(400).send("Cannot delete room while patients are assigned.");
+    }
 
     await Room.findByIdAndDelete(room._id);
-
     res.redirect("/rooms");
   } catch (err) {
     console.error(err);

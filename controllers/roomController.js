@@ -112,12 +112,24 @@ exports.remove = async (req, res) => {
 exports.getAvailableRooms = async () => {
   try {
     const rooms = await Room.find({}).populate("currentPatients");
+
     const availableRooms = rooms.filter(
       (room) => room.currentPatients.length < room.capacity
     );
-    return availableRooms.length;
+
+    const availableIsolationRooms = availableRooms.filter(
+      (room) => room.isIsolation === true
+    );
+
+    return {
+      totalAvailable: availableRooms.length,
+      isolationAvailable: availableIsolationRooms.length,
+    };
   } catch (err) {
     console.error("Error getting available rooms:", err);
-    return 0;
+    return {
+      totalAvailable: 0,
+      isolationAvailable: 0
+    };
   }
 };

@@ -17,13 +17,14 @@ router.post("/login", authController.login);
 router.get("/homepage", isAuthenticated, async (req, res) => {
   try {
     const totalPatients = await getTotalPatients();
-    const availableRooms = await getAvailableRooms();
+    const { totalAvailable, isolationAvailable } = await getAvailableRooms();
 
     res.render("homepage", {
       user: req.session.user,
       stats: {
         totalPatients,
-        availableRooms,
+        availableRooms: totalAvailable,
+        isolationRoomsAvailable: isolationAvailable,
       }
     });
   } catch (err) {

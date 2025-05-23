@@ -241,3 +241,16 @@ footer {
   background-color: #d4edda; /* Light green */
   color: #155724;
 }
+th a {
+  text-decoration: none;
+  color: inherit;
+}
+
+th a:hover {
+  text-decoration: underline;
+}
+
+th a span.arrow {
+  font-size: 0.8em;
+  margin-left: 4px;
+}

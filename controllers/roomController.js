@@ -4,11 +4,37 @@ const Patient = require("../models/Patient");
 // List all rooms
 exports.index = async (req, res) => {
   try {
-    const rooms = await Room.find().populate("currentPatients");
-    res.render("rooms/index", { rooms, user: req.session.user });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error fetching rooms");
+    const sortField = req.query.sort || 'name';  // default sort field
+    const sortOrder = req.query.order === 'desc' ? -1 : 1; // default ascending
+
+    // Fetch rooms and populate currentPatients so length can be used
+    let rooms = await Room.find().populate('currentPatients');
+
+    // Sort after fetching because sorting by currentPatients.length requires populated data
+    rooms.sort((a, b) => {
+      switch (sortField) {
+        case 'name':
+          return a.name.localeCompare(b.name) * sortOrder;
+        case 'capacity':
+          return (a.capacity - b.capacity) * sortOrder;
+        case 'currentPatients':
+          return (a.currentPatients.length - b.currentPatients.length) * sortOrder;
+        case 'isolation':
+          // Sort false before true for asc, reverse for desc
+          return ((a.isIsolation === b.isIsolation) ? 0 : a.isIsolation ? 1 : -1) * sortOrder;
+        default:
+          return 0;
+      }
+    });
+
+    res.render('rooms/index', {
+      rooms,
+      user: req.user,
+      currentSort: { field: sortField, order: sortOrder === 1 ? 'asc' : 'desc' }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error fetching rooms');
   }
 };
 

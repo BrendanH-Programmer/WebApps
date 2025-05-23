@@ -1,42 +1,56 @@
 <%- include("../partials/header") %>
 <link rel="stylesheet" href="/css/style.css">
 
-<div class="room-list">
+<div class="room-card">
   <h2>All Rooms</h2> 
   <% if (user && user.role === "admin") { %>
     <a href="/rooms/new">+ Add New Room</a>
   <% } %>
 
-  <%
-    let sortedRooms = rooms.slice().sort((a, b) => {
-      if (a.isIsolation && !b.isIsolation) return -1;
-      if (!a.isIsolation && b.isIsolation) return 1;
-      return a.name.localeCompare(b.name);
-    });
-  %>
-
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Capacity</th>
-        <th>Current Patients</th>
-        <th>Isolation</th>
+        <th>
+          Name
+          <a href="?sort=name&order=asc">&#9650;</a>
+          <a href="?sort=name&order=desc">&#9660;</a>
+        </th>
+        <th>
+          Capacity
+          <a href="?sort=capacity&order=asc">&#9650;</a>
+          <a href="?sort=capacity&order=desc">&#9660;</a>
+        </th>
+        <th>
+          Current Patients
+          <a href="?sort=currentPatients&order=asc">&#9650;</a>
+          <a href="?sort=currentPatients&order=desc">&#9660;</a>
+        </th>
+        <th>
+          <a href="?sort=isolation&order=<%= currentSort.field === 'isolation' && currentSort.order === 'asc' ? 'desc' : 'asc' %>">
+            Isolation
+            <%= currentSort.field === 'isolation' ? (currentSort.order === 'asc' ? '▼' : '▲') : '' %>
+          </a>
+        </th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <% sortedRooms.forEach(room => { %>
+      <% rooms.forEach(room => { %>
         <tr class="<%= room.isIsolation ? 'isolation-room' : 'non-isolation-room' %>">
           <td><a href="/rooms/<%= room._id %>"><%= room.name %></a></td>
-          <td><%= room.capacity %></td>
+          <td>
+            <%= room.capacity %>
+            <% if (room.currentPatients.length >= room.capacity) { %>
+              <span style="color: red; font-weight: bold;">(Full)</span>
+            <% } %>
+          </td>
           <td><%= room.currentPatients.length %></td>
           <td><%= room.isIsolation ? "Yes" : "No" %></td>
           <td>
             <% if (user && user.role === "admin") { %>
               <a href="/rooms/<%= room._id %>/edit">Edit</a> |
               <form action="/rooms/<%= room._id %>?_method=DELETE" method="POST" style="display:inline;">
-                <button type="submit" onclick="return confirm('Delete this room?')">Delete</button>
+                <button type="submit" <%= room.currentPatients.length > 0 ? 'disabled title="Cannot delete room with patients assigned"' : '' %>>Delete</button>
               </form>
             <% } %>
           </td>

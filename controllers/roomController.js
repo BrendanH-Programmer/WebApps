@@ -29,7 +29,6 @@ exports.index = async (req, res) => {
 
     res.render('rooms/index', {
       rooms,
-      user: req.user,
       currentSort: { field: sortField, order: sortOrder === 1 ? 'asc' : 'desc' }
     });
   } catch (error) {

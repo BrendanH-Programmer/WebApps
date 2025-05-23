@@ -66,4 +66,15 @@ router.post("/patients", isAuthenticated, allowRoles(["admin", "nurse"]), patien
 router.get("/rooms", isAuthenticated, allowRoles(["admin", "nurse"]), roomController.index);
 router.post("/rooms", isAuthenticated, isAdmin, roomController.createRoom);
 
+router.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Failed to destroy session during logout:", err);
+      return res.redirect("/");
+    }
+    res.clearCookie("connect.sid"); // Clear session cookie
+    res.redirect("/login");
+  });
+});
+
 module.exports = router;

@@ -36,6 +36,18 @@ app.use(session({
   cookie: { secure: false } // Set to true if using HTTPS
 }));
 
+app.use((req, res, next) => {
+  res.locals.user = req.session.user;
+  next();
+});
+
+// Middleware before your routes
+app.use((req, res, next) => {
+  res.locals.user = req.session.user;
+  next();
+});
+
+// Route definitions (after middleware)
 app.use("/", authRoutes);
 app.use("/patients", patientRoutes);
 app.use("/rooms", roomRoutes);

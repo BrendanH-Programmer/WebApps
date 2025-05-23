@@ -2,7 +2,7 @@ const Room = require("../models/Room");
 
 exports.assignRoomToPatient = async (patient) => {
   // Try to find an isolation room first if infectionRisk is high
-  const query = patient.infectionRisk > 5
+  const query = patient.infectionRisk > 7
     ? { isIsolation: true }
     : {};
 

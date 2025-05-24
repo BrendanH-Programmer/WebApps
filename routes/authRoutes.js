@@ -4,8 +4,6 @@ const authController = require("../controllers/authController");
 const roomController = require("../controllers/roomController");
 const patientController = require("../controllers/patientController");
 const { isAuthenticated, isAdmin, allowRoles } = require("../utils/authMiddleware");
-const { getTotalPatients } = require("../controllers/patientController");
-const { getAvailableRooms } = require("../controllers/roomController");
 
 // Auth routes
 router.get("/register", (req, res) => res.render("register"));
@@ -14,10 +12,10 @@ router.get("/login", (req, res) => res.render("login"));
 router.post("/login", authController.login);
 
 // Homepage/dashboard (protected)
-router.get("/homepage", isAuthenticated, async (req, res) => {
+router.get("/homepage", isAuthenticated, async (req, res, next) => {
   try {
-    const totalPatients = await getTotalPatients();
-    const { totalAvailable, isolationAvailable } = await getAvailableRooms();
+    const totalPatients = await patientController.getTotalPatients();
+    const { totalAvailable, isolationAvailable } = await roomController.getAvailableRooms();
 
     res.render("homepage", {
       user: req.session.user,
@@ -25,16 +23,17 @@ router.get("/homepage", isAuthenticated, async (req, res) => {
         totalPatients,
         availableRooms: totalAvailable,
         isolationRoomsAvailable: isolationAvailable,
-      }
+      },
     });
   } catch (err) {
     console.error("Error loading homepage:", err);
-    res.status(500).send("Server error");
+    err.status = 500;
+    next(err);
   }
 });
 
 // Search route - protected
-router.get("/search", isAuthenticated, async (req, res) => {
+router.get("/search", isAuthenticated, async (req, res, next) => {
   const { type, q } = req.query;
   let results = [];
 
@@ -49,11 +48,12 @@ router.get("/search", isAuthenticated, async (req, res) => {
       user: req.session.user,
       results,
       type,
-      query: q
+      query: q,
     });
   } catch (err) {
     console.error("Search error:", err);
-    res.status(500).send("Search failed");
+    err.status = 500;
+    next(err);
   }
 });
 
@@ -66,13 +66,15 @@ router.post("/patients", isAuthenticated, allowRoles(["admin", "nurse"]), patien
 router.get("/rooms", isAuthenticated, allowRoles(["admin", "nurse"]), roomController.index);
 router.post("/rooms", isAuthenticated, isAdmin, roomController.createRoom);
 
-router.get("/logout", (req, res) => {
+// Logout route
+router.get("/logout", (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {
       console.error("Failed to destroy session during logout:", err);
-      return res.redirect("/");
+      err.status = 500;
+      return next(err);
     }
-    res.clearCookie("connect.sid"); // Clear session cookie
+    res.clearCookie("connect.sid");
     res.redirect("/login");
   });
 });

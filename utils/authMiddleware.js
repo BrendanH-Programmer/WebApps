@@ -1,26 +1,40 @@
+// Check if user is logged in
 exports.isAuthenticated = (req, res, next) => {
-  if (req.session.user) return next();
-  res.redirect("/login");
+  if (req.session.user) {
+    return next();
+  }
+
+  // Pass a 403 error for unauthenticated access
+  const err = new Error("Unauthorized: Please log in");
+  err.status = 403;
+  return next(err);
 };
 
+// Check if user is admin
 exports.isAdmin = (req, res, next) => {
   if (req.session.user && req.session.user.role === "admin") {
     return next();
   }
-  return res.status(403).send("Forbidden: Admins only");
+
+  const err = new Error("Forbidden: Admins only");
+  err.status = 403;
+  return next(err);
 };
 
+// Allow specific roles
 exports.allowRoles = (roles) => {
   return (req, res, next) => {
     if (req.session.user && roles.includes(req.session.user.role)) {
       return next();
     }
-    return res.status(403).send("Forbidden: You do not have access");
+
+    const err = new Error("Forbidden: You do not have access");
+    err.status = 403;
+    return next(err);
   };
 };
 
-
-// Middleware to set user in views locals (call this in your main app)
+// Set user in views locals (keep as-is)
 exports.setUserInViews = (req, res, next) => {
   res.locals.user = req.session.user || null;
   next();

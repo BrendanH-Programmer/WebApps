@@ -18,7 +18,6 @@ exports.index = async (req, res) => {
 
     const sortOptions = {};
     if (sort) {
-      // Map friendly sort names to actual database fields
       const fieldMap = {
         name: "surname", // Sorting by name uses surname for now
         dob: "dateOfBirth",
@@ -72,10 +71,8 @@ exports.index = async (req, res) => {
 
     res.render("patients/index", { patients, sort, order });
   } catch (error) {
-    console.error("Error fetching patients:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
+      res.status(500).send(error.message || 'Failed to load patient list.');
+}};
 
 // Show new patient form
 exports.new = async (req, res) => {
@@ -98,11 +95,9 @@ exports.new = async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error loading form");
-  }
-};
-
+      res.status(500).send(error.message || 'Failed to load new patient form.');
+}};
+  
 // Show edit patient form
 exports.edit = async (req, res) => {
   try {
@@ -141,10 +136,8 @@ exports.edit = async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error loading edit form");
-  }
-};
+      res.status(500).send(error.message || 'Failed to load edit patient form.');
+}};
 
 // Create patient
 exports.create = async (req, res) => {
@@ -194,9 +187,8 @@ exports.create = async (req, res) => {
 
     res.redirect("/patients");
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error creating patient");
-  }
+      res.status(500).send(error.message || 'Failed to create patient.');
+  };
 };
 
 // Update patient info
@@ -259,10 +251,8 @@ exports.update = async (req, res) => {
 
     res.redirect("/patients");
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error updating patient");
-  }
-};
+      res.status(500).send(error.message || 'Failed to update patient information.');
+}};
 
 // Delete patient
 exports.remove = async (req, res) => {
@@ -280,9 +270,8 @@ exports.remove = async (req, res) => {
 
     res.redirect("/patients");
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error deleting patient");
-  }
+      res.status(500).send(error.message || 'Failed to delete patient.');
+      };
 };
 
 // View patient details
@@ -294,11 +283,9 @@ exports.show = async (req, res) => {
     res.render("patients/view", { patient, user: req.session.user });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error retrieving patient details");
-  }
+      res.status(500).send(error.message || 'Failed to retrieve patient details.');
 };
-
+};
 
 // Get total number of patients in the database
 exports.getTotalPatients = async () => {
@@ -306,7 +293,6 @@ exports.getTotalPatients = async () => {
     const count = await Patient.countDocuments(); // No filter — returns all patients
     return count;
   } catch (err) {
-    console.error("Error getting total patients:", err);
     throw err;
   }
 };
@@ -317,7 +303,6 @@ exports.getPatientsInIsolation = async () => {
     const count = await Patient.countDocuments({ infectionRisk: { $gte: 7 } });
     return count;
   } catch (err) {
-    console.error("Error getting patients in isolation:", err);
     throw err;
   }
 };
@@ -337,7 +322,6 @@ exports.searchPatients = async (query) => {
 
     return patients;
   } catch (err) {
-    console.error("Error searching patients:", err);
     return [];
   }
 };

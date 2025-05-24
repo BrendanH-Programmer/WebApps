@@ -6,8 +6,8 @@ exports.getAllSymptoms = async (req, res) => {
     const symptoms = await Symptom.find().lean();
     res.render("symptoms/index", { symptoms, user: req.user });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error fetching symptoms");
+  console.error(error);
+  res.status(500).render("errors/500", { error, message: "Error fetching symptoms" });
   }
 };
 
@@ -23,8 +23,8 @@ exports.create = async (req, res) => {
     await Symptom.create({ name, riskValue });
     res.redirect("/symptoms");
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error adding symptom");
+  console.error(error);
+  res.status(500).render("errors/500", { error, message: "Error adding symptoms" });
   }
 };
 
@@ -34,8 +34,8 @@ exports.edit = async (req, res) => {
     const symptom = await Symptom.findById(req.params.id).lean();
     res.render("symptoms/edit", { symptom });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error loading edit form");
+  console.error(error);
+  res.status(500).render("errors/500", { error, message: "Error loading symptoms form" });
   }
 };
 
@@ -46,8 +46,8 @@ exports.update = async (req, res) => {
     await Symptom.findByIdAndUpdate(req.params.id, { name, riskValue });
     res.redirect("/symptoms");
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error updating symptom");
+  console.error(error);
+  res.status(500).render("errors/500", { error, message: "Error updating symptoms" });
   }
 };
 
@@ -57,7 +57,7 @@ exports.delete = async (req, res) => {
     await Symptom.findByIdAndDelete(req.params.id);
     res.redirect("/symptoms");
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error deleting symptom");
+  console.error(error);
+  res.status(500).render("errors/500", { error, message: "Error deleting symptoms" });
   }
 };

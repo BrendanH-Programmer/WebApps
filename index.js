@@ -54,6 +54,30 @@ app.use("/patients", patientRoutes);
 app.use("/rooms", roomRoutes);
 app.use("/symptoms", symptomRoutes);
 
+
+// Middleware to handle 403 Forbidden (access denied)
+function forbiddenHandler(req, res, next) {
+  const err = new Error("Forbidden");
+  err.status = 403;
+  next(err);
+}
+
+// 404 Not Found
+app.use((req, res) => {
+  res.status(404).render("errors/404", { url: req.originalUrl });
+});
+
+// Error handling middleware - catches all errors passed with next(err)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+
+  if (err.status === 403) {
+    res.status(403).render("errors/403");
+  } else {
+    res.status(err.status || 500).render("errors/500");
+  }
+});
+
 app.listen(process.env.PORT || 10017, () => {
   console.log("Server is running");
 });

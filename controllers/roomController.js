@@ -32,9 +32,8 @@ exports.index = async (req, res) => {
       currentSort: { field: sortField, order: sortOrder === 1 ? 'asc' : 'desc' }
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Error fetching rooms');
-  }
+  res.status(500).send(error.message || 'Error fetching rooms');
+}
 };
 
 // Show a specific room
@@ -50,8 +49,7 @@ exports.show = async (req, res) => {
       user: req.session.user,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error retrieving room details");
+  res.status(500).send(err.message || "Error retrieving room details");
   }
 };
 
@@ -73,8 +71,7 @@ exports.createRoom = async (req, res) => {
 
     res.redirect("/rooms");
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error creating room");
+  res.status(500).send(err.message || "Error creating room");
   }
 };
 
@@ -87,8 +84,7 @@ exports.edit = async (req, res) => {
     }
     res.render("rooms/edit", { room, user: req.session.user });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error retrieving room for edit");
+  res.status(500).send(err.message || "Error retrieving room for edit");
   }
 };
 
@@ -111,8 +107,7 @@ exports.update = async (req, res) => {
     await Room.findByIdAndUpdate(req.params.id, updatedData, { new: true });
     res.redirect("/rooms");
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error updating room");
+  res.status(500).send(err.message || "Error updating room");
   }
 };
 
@@ -133,8 +128,7 @@ exports.remove = async (req, res) => {
     await Room.findByIdAndDelete(room._id);
     res.redirect("/rooms");
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error deleting room");
+  res.status(500).send(err.message || "Error deleting room");
   }
 };
 
@@ -155,10 +149,10 @@ exports.getAvailableRooms = async () => {
       isolationAvailable: availableIsolationRooms.length,
     };
   } catch (err) {
-    console.error("Error getting available rooms:", err);
     return {
       totalAvailable: 0,
-      isolationAvailable: 0
+      isolationAvailable: 0,
+      error: err.message || "Error getting available rooms"
     };
   }
 };
@@ -187,7 +181,6 @@ exports.searchRooms = async (query) => {
 
     return rooms;
   } catch (err) {
-    console.error("Error searching rooms:", err);
-    return [];
+  return { rooms: [], error: err.message || "Error searching rooms" };
   }
 };

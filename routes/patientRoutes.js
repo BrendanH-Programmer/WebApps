@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const patientController = require("../controllers/patientController");
 const { isAuthenticated, allowRoles, isAdmin } = require("../utils/authMiddleware");
+const { getPatients } = require("../controllers/patientController");
 
 // Access Control: admin and nurse for most, only admin for delete
 router.get("/", isAuthenticated, allowRoles(["admin", "nurse"]), patientController.index);
@@ -10,6 +11,6 @@ router.get("/:id", isAuthenticated, allowRoles(["admin", "nurse"]), patientContr
 router.post("/", isAuthenticated, allowRoles(["admin", "nurse"]), patientController.create);
 router.get("/:id/edit", isAuthenticated, allowRoles(["admin", "nurse"]), patientController.edit);
 router.put("/:id", isAuthenticated, allowRoles(["admin", "nurse"]), patientController.update);
-router.delete("/:id", isAuthenticated, isAdmin, patientController.remove);
+router.delete("/:id", isAuthenticated, allowRoles(["admin"]), patientController.remove);
 
 module.exports = router;

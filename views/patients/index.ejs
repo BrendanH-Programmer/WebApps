@@ -2,19 +2,45 @@
 <link rel="stylesheet" href="/css/style.css">
 
 <h1>All Patients</h1>
+
 <table>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>DOB</th>
-      <th>Age</th>
-      <th>Gender</th>
-      <th>Risk</th>
-      <th>Room</th>
+      <th>
+        Name
+        <a href="?sort=name&order=asc">&#9650;</a>
+        <a href="?sort=name&order=desc">&#9660;</a>
+      </th>
+      <th>
+        DOB
+        <a href="?sort=dob&order=asc">&#9650;</a>
+        <a href="?sort=dob&order=desc">&#9660;</a>
+      </th>
+      <th>
+        Age
+        <a href="?sort=dob&order=desc">&#9650;</a>
+        <a href="?sort=dob&order=asc">&#9660;</a>
+      </th>
+      <th>
+        Gender
+        <a href="?sort=gender&order=asc">&#9650;</a>
+        <a href="?sort=gender&order=desc">&#9660;</a>
+      </th>
+      <th>
+        Risk
+        <a href="?sort=risk&order=asc">&#9650;</a>
+        <a href="?sort=risk&order=desc">&#9660;</a>
+      </th>
+      <th>
+        Room
+        <a href="?sort=room&order=asc">&#9650;</a>
+        <a href="?sort=room&order=desc">&#9660;</a>
+      </th>
       <th>NHS #</th>
       <th>Actions</th>
     </tr>
   </thead>
+
   <tbody>
     <% patients.forEach(patient => { %>
       <tr class="<%= patient.infectionRisk >= 7 ? 'high-risk' : patient.infectionRisk >= 4 ? 'moderate-risk' : 'low-risk' %>">
@@ -22,7 +48,7 @@
         <td><%= new Date(patient.dateOfBirth).toLocaleDateString() %></td>
         <td><%= patient.age %></td>
         <td><%= patient.gender %></td>
-        <td><%= patient.infectionRisk %></td>
+        <td><%= patient.infectionRisk != null ? patient.infectionRisk : 'N/A' %></td>
         <td><%= patient.roomAssigned ? patient.roomAssigned.name : "Unassigned" %></td>
         <td><%= patient.nhsNumber %></td>
         <td>

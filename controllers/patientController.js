@@ -14,12 +14,66 @@ function capitalize(str) {
 // List all patients
 exports.index = async (req, res) => {
   try {
-    const patients = await Patient.find().populate("roomAssigned");
-    res.render("patients/index", { patients, user: req.session.user });
+    let { sort, order } = req.query;
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error retrieving patients");
+    const sortOptions = {};
+    if (sort) {
+      // Map friendly sort names to actual database fields
+      const fieldMap = {
+        name: "surname", // Sorting by name uses surname for now
+        dob: "dateOfBirth",
+        age: "dateOfBirth", // We calculate age based on DOB, so sort by DOB
+        gender: "gender",
+        risk: "infectionRisk",
+        room: "roomAssigned.name"
+      };
+
+      const sortField = fieldMap[sort];
+
+      if (sortField) {
+        sortOptions[sortField] = order === "desc" ? -1 : 1;
+      }
+    }
+
+    let patients = await Patient.find().populate("roomAssigned").lean();
+
+    // If sorting by age, sort manually in JS because age isn't a stored field
+    if (sort === "age") {
+      patients.sort((a, b) => {
+        const getAge = (dob) => {
+          const dobDate = new Date(dob);
+          const diffMs = Date.now() - dobDate.getTime();
+          return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365.25));
+        };
+
+        const aAge = getAge(a.dateOfBirth);
+        const bAge = getAge(b.dateOfBirth);
+        return order === "desc" ? bAge - aAge : aAge - bAge;
+      });
+    } else if (sort === "room") {
+      patients.sort((a, b) => {
+        const aRoom = a.roomAssigned?.name || "";
+        const bRoom = b.roomAssigned?.name || "";
+        return order === "desc"
+          ? bRoom.localeCompare(aRoom)
+          : aRoom.localeCompare(bRoom);
+      });
+    } else if (sort === "name") {
+      patients.sort((a, b) => {
+        const surnameCompare = a.surname.localeCompare(b.surname);
+        if (surnameCompare !== 0) return order === "desc" ? -surnameCompare : surnameCompare;
+
+        const firstNameCompare = a.firstName.localeCompare(b.firstName);
+        return order === "desc" ? -firstNameCompare : firstNameCompare;
+      });
+    } else {
+      patients = await Patient.find().populate("roomAssigned").sort(sortOptions).lean();
+    }
+
+    res.render("patients/index", { patients, sort, order });
+  } catch (error) {
+    console.error("Error fetching patients:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -287,3 +341,45 @@ exports.searchPatients = async (query) => {
     return [];
   }
 };
+
+async function getPatients(req, res) {
+  let { sort = 'surname', order = 'asc' } = req.query;
+
+  // Allowed fields to sort on
+  const validSortFields = ['title', 'firstName', 'surname', 'gender', 'dateOfBirth', 'infectionRisk', 'roomAssigned', 'age'];
+
+  if (!validSortFields.includes(sort)) sort = 'surname';
+  if (!['asc', 'desc'].includes(order)) order = 'asc';
+
+  // Build sort query for MongoDB
+  let sortQuery = {};
+  if (sort !== 'age' && sort !== 'roomAssigned') {
+    sortQuery[sort] = order === 'asc' ? 1 : -1;
+  }
+
+  // Fetch patients with room populated
+  let patients = await Patient.find().populate('roomAssigned').sort(sortQuery).exec();
+
+  // Manual sorting for age (virtual) or roomAssigned (nested)
+  if (sort === 'age') {
+    patients = patients.sort((a, b) => {
+      const ageA = a.age;
+      const ageB = b.age;
+      return order === 'asc' ? ageA - ageB : ageB - ageA;
+    });
+  } else if (sort === 'roomAssigned') {
+    patients = patients.sort((a, b) => {
+      const roomA = a.roomAssigned?.name || '';
+      const roomB = b.roomAssigned?.name || '';
+      return order === 'asc' ? roomA.localeCompare(roomB) : roomB.localeCompare(roomA);
+    });
+  }
+
+  res.render('patients/index', {
+    patients,
+    user: req.session.user,
+    sort,
+    order,
+  });
+}
+exports.getPatients = getPatients;

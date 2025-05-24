@@ -1,0 +1,31 @@
+<%- include("../partials/header") %>
+
+<h1>Symptom Management</h1>
+
+<% if (user && user.role === 'admin') { %>
+  <a href="/symptoms/new">Add New Symptom</a>
+<% } %>
+
+<table border="1">
+  <tr>
+    <th>Name</th>
+    <th>Risk Value</th>
+    <th>Actions</th>
+  </tr>
+  <% symptoms.forEach(symptom => { %>
+    <tr>
+      <td><%= symptom.name %></td>
+      <td><%= symptom.riskValue %></td>
+      <td>
+        <% if (user && user.role === 'admin') { %>
+          <a href="/symptoms/<%= symptom._id %>/edit">Edit</a>
+          <form action="/symptoms/<%= symptom._id %>?_method=DELETE" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('Delete this symptom?');">Delete</button>
+          </form>
+        <% } %>
+      </td>
+    </tr>
+  <% }); %>
+</table>
+
+<%- include("../partials/footer") %>

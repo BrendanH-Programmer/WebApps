@@ -8,6 +8,7 @@ const path = require("path");
 const authRoutes = require("./routes/authRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const roomRoutes = require("./routes/roomRoutes");
+const symptomRoutes = require("./routes/symptomRoutes");
 
 require("dotenv").config();
 
@@ -51,6 +52,7 @@ app.use((req, res, next) => {
 app.use("/", authRoutes);
 app.use("/patients", patientRoutes);
 app.use("/rooms", roomRoutes);
+app.use("/symptoms", symptomRoutes);
 
 app.listen(process.env.PORT || 10017, () => {
   console.log("Server is running");

@@ -1,0 +1,16 @@
+<%- include("../partials/header") %>
+
+<h1>Add New Symptom</h1>
+<form action="/symptoms" method="POST">
+  <label for="name">Symptom Name:</label>
+  <input type="text" name="name" id="name" required><br>
+
+  <label for="riskValue">Risk Value:</label>
+  <input type="number" name="riskValue" id="riskValue" required><br>
+
+  <button type="submit">Add Symptom</button>
+</form>
+
+<a href="/symptoms">Back to Symptom List</a>
+
+<%- include("../partials/footer") %>

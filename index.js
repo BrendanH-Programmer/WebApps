@@ -9,6 +9,8 @@ const authRoutes = require("./routes/authRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const roomRoutes = require("./routes/roomRoutes");
 const symptomRoutes = require("./routes/symptomRoutes");
+const { setUserInViews } = require("./utils/authMiddleware");
+
 
 require("dotenv").config();
 
@@ -37,16 +39,9 @@ app.use(session({
   cookie: { secure: false } // Set to true if using HTTPS
 }));
 
-app.use((req, res, next) => {
-  res.locals.user = req.session.user;
-  next();
-});
-
 // Middleware before your routes
-app.use((req, res, next) => {
-  res.locals.user = req.session.user;
-  next();
-});
+app.use(setUserInViews);
+
 
 // Route definitions (after middleware)
 app.use("/", authRoutes);

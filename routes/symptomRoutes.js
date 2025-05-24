@@ -8,6 +8,6 @@ router.get("/new", isAuthenticated, allowRoles(["admin"]), symptomsController.sh
 router.post("/", isAuthenticated, allowRoles(["admin"]), symptomsController.create);
 router.get("/:id/edit", isAuthenticated, allowRoles(["admin"]), symptomsController.edit);
 router.put("/:id", isAuthenticated, allowRoles(["admin"]), symptomsController.update);
-router.delete("/:id", isAuthenticated, isAdmin, symptomsController.delete);
+router.delete("/:id", isAuthenticated, allowRoles(["admin"]), symptomsController.delete);
 
 module.exports = router;

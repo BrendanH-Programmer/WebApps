@@ -13,19 +13,18 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-      <a class="navbar-brand" href="/">Hospital Dashboard</a>
+      <a class="navbar-brand" href="/homepage">Hospital Dashboard</a>
       <div>
         <span class="navbar-text text-white me-3">
           Logged in as <strong><%= user.username %> (<%= user.role %>)</strong>
         </span>
-        <a href="/login" class="btn btn-outline-light btn-sm">Logout</a>
+        <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
       </div>
     </div>
   </nav>
 
   <main class="container my-5">
     <h1 class="mb-4">Welcome, <%= user.username %></h1>
-    <p class="lead mb-4">Select an action below or view current stats:</p>
 
     <!-- Stats cards -->
     <div class="row row-cols-1 row-cols-md-4 g-4 mb-5">

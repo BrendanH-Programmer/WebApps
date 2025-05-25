@@ -73,6 +73,10 @@ app.use((err, req, res, next) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.redirect('/homepage');
+});
+
 app.listen(process.env.PORT || 10017, () => {
   console.log("Server is running");
 });

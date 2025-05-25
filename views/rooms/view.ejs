@@ -27,7 +27,11 @@
       <tbody>
         <% patients.forEach(patient => { %>
           <tr>
-            <td><%= patient.firstName %> <%= patient.surname %></td>
+            <td>
+              <a href="/patients/<%= patient._id %>">
+                <%= patient.firstName %> <%= patient.surname %>
+              </a>
+            </td>
             <td><%= patient.dateOfBirth ? patient.dateOfBirth.toISOString().split('T')[0] : 'N/A' %></td>
             <td><%= patient.gender || 'N/A' %></td>
             <td><%= patient.phoneNumber || 'N/A' %></td>

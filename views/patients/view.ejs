@@ -21,7 +21,16 @@
     </ul>
   </p>
   <p><strong>Infection Risk:</strong> <%= patient.infectionRisk %></p>
-  <p><strong>Room Assigned:</strong> <%= patient.roomAssigned ? patient.roomAssigned.name : "Not Assigned" %></p>
+  <p>
+    <strong>Room Assigned:</strong>
+    <% if (patient.roomAssigned) { %>
+      <a href="/rooms/<%= patient.roomAssigned._id %>">
+        <%= patient.roomAssigned.name %>
+      </a>
+    <% } else { %>
+      Not Assigned
+    <% } %>
+  </p>
   <p><strong>NHS Number:</strong> <%= patient.nhsNumber %></p>
 
 <a href="/patients">Back to List</a> | <a href="/patients/<%= patient._id %>/edit">Edit</a>

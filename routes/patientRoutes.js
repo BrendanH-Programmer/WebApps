@@ -3,6 +3,7 @@ const router = express.Router();
 const patientController = require("../controllers/patientController");
 const { isAuthenticated, allowRoles, isAdmin } = require("../utils/authMiddleware");
 const { getPatients } = require("../controllers/patientController");
+const { buildSymptomRiskMap } = require("../controllers/patientController");
 
 // Access Control: admin and nurse for most, only admin for delete
 router.get("/", isAuthenticated, allowRoles(["admin", "nurse"]), patientController.index);

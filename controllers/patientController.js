@@ -11,6 +11,14 @@ function capitalize(str) {
     .join(' ');
 }
 
+// Utility to build symptom risk map
+async function buildSymptomRiskMap() {
+  const symptoms = await Symptom.find();
+  const map = {};
+  symptoms.forEach(s => map[s.name] = s.riskValue);
+  return map;
+}
+
 // List all patients
 exports.index = async (req, res) => {
   try {
@@ -97,30 +105,21 @@ exports.new = async (req, res) => {
   } catch (err) {
       res.status(500).send(error.message || 'Failed to load new patient form.');
 }};
-  
-// Show edit patient form
-exports.edit = async (req, res) => {
+
+ exports.edit = async (req, res) => {
   try {
     const patient = await Patient.findById(req.params.id);
     const symptomList = await Symptom.find();
 
     if (!patient) return res.status(404).send("Patient not found");
 
-    const infectionRisk = patient.infectionRisk || 0;
+    // Get all available rooms regardless of isolation status
     let availableRooms = await Room.find({
       status: "Available",
-      $expr: { $lt: [{ $size: "$currentPatients" }, "$capacity"] },
-      isIsolation: infectionRisk >= 7
+      $expr: { $lt: [{ $size: "$currentPatients" }, "$capacity"] }
     });
 
-    if (infectionRisk < 7) {
-      availableRooms = await Room.find({
-        status: "Available",
-        $expr: { $lt: [{ $size: "$currentPatients" }, "$capacity"] },
-        isIsolation: false
-      });
-    }
-
+    // Add current assigned room if not already in availableRooms
     if (patient.roomAssigned) {
       const currentRoom = await Room.findById(patient.roomAssigned);
       if (currentRoom && !availableRooms.some(r => r._id.equals(currentRoom._id))) {
@@ -128,16 +127,21 @@ exports.edit = async (req, res) => {
       }
     }
 
+    const symptomRiskMap = {};
+    symptomList.forEach(s => (symptomRiskMap[s.name] = s.riskValue));
+
     res.render("patients/edit", {
       patient,
       symptomList,
       rooms: availableRooms,
+      symptomRiskMap,
       user: req.session.user
     });
 
-  } catch (err) {
-      res.status(500).send(error.message || 'Failed to load edit patient form.');
-}};
+  } catch (error) {
+    res.status(500).send(error.message || 'Failed to load edit patient form.');
+  }
+};
 
 // Create patient
 exports.create = async (req, res) => {
@@ -213,6 +217,8 @@ exports.update = async (req, res) => {
     if (!isSameRoom && selectedRoom.currentPatients.length >= selectedRoom.capacity) {
       return res.status(400).send("Room at full capacity.");
     }
+    // Assign new room based on symptom count
+    const symptomCount = patient.symptoms.length;
 
     if ((infectionRisk >= 7 && !selectedRoom.isIsolation) ||
         (infectionRisk < 7 && selectedRoom.isIsolation)) {
@@ -228,7 +234,14 @@ exports.update = async (req, res) => {
       selectedRoom.currentPatients.push(patient._id);
       await selectedRoom.save();
     }
-
+    // Free up the previous room
+    if (patient.roomAssigned) {
+      const oldRoom = await Room.findById(patient.roomAssigned);
+      if (oldRoom) {
+        oldRoom.isAvailable = true;
+        await oldRoom.save();
+      }
+    }
     Object.assign(patient, {
       title: req.body.title,
       firstName: capitalize(req.body.firstName),
@@ -300,7 +313,7 @@ exports.getTotalPatients = async () => {
 // Get number of patients currently in isolation (infectionRisk >= 7)
 exports.getPatientsInIsolation = async () => {
   try {
-    const count = await Patient.countDocuments({ infectionRisk: { $gte: 7 } });
+    const count = await Patient.countDocuments({ infectionRisk: { $gte: 8 } });
     return count;
   } catch (err) {
     throw err;

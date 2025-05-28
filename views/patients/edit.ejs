@@ -1,4 +1,5 @@
 <%- include("../partials/header") %>
+
 <link rel="stylesheet" href="/css/style.css">
 <h1>Edit Patient</h1>
 
@@ -75,5 +76,49 @@
 
   <button type="submit">Update Patient</button>
 </form>
+
+<script>
+  const symptomCheckboxes = document.querySelectorAll('input[name="symptoms"]');
+  const roomSelect = document.getElementById('roomAssigned');
+
+  // Injected as a real object, not a string
+  const symptomRiskMap = <%- JSON.stringify(symptomRiskMap) %>;
+
+  function filterRooms() {
+    let risk = 0;
+    symptomCheckboxes.forEach(cb => {
+      if (cb.checked) {
+        risk += symptomRiskMap[cb.value] || 0;
+      }
+    });
+
+    const highRiskThreshold = 6;
+
+    for (let option of roomSelect.options) {
+      if (!option.value) continue; // skip placeholder
+
+      const isIsolation = option.getAttribute('data-isolation') === 'true';
+
+      if (risk > highRiskThreshold) {
+        option.hidden = !isIsolation;  // show isolation rooms only
+      } else {
+        option.hidden = isIsolation;   // show non-isolation rooms only
+      }
+    }
+
+    // Reset selection if current selected option is hidden
+    if (roomSelect.selectedOptions.length > 0) {
+      const selectedOption = roomSelect.selectedOptions[0];
+      if (selectedOption.hidden) {
+        roomSelect.value = "";
+      }
+    }
+  }
+
+  symptomCheckboxes.forEach(cb => cb.addEventListener('change', filterRooms));
+
+  // Initial filtering on page load
+  filterRooms();
+</script>
 
 <%- include("../partials/footer") %>

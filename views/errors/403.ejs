@@ -1,8 +1,12 @@
 <%- include("../partials/header") %>
 
-<h1>403 Forbidden</h1>
-<p>Sorry, you do not have permission to access this page.</p>
-<a href="/homepage">Go back to homepage</a>
-<a href="/login">Login</a>
+<link rel="stylesheet" href="/css/style.css">
+
+<div class="error-container">
+    <h1>403</h1>
+    <p>Sorry, you do not have permission to access this page.</p>
+    <a href="/homepage" class="action-btn btn-view">Go back to homepage</a>
+    <a href="/login" class="action-btn btn-view">Login</a>
+</div>
 
 <%- include("../partials/footer") %>

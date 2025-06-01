@@ -3,6 +3,7 @@ const router = express.Router();
 const roomController = require("../controllers/roomController");
 const { isAuthenticated, allowRoles, isAdmin } = require("../utils/authMiddleware");
 
+// Room Routes
 router.get("/", isAuthenticated, allowRoles(["admin", "nurse"]), roomController.index);
 router.get("/new", isAuthenticated, allowRoles(["admin"]), roomController.new);
 router.post("/", isAuthenticated, allowRoles(["admin"]), roomController.createRoom);

@@ -3,6 +3,7 @@ const router = express.Router();
 const symptomsController = require("../controllers/symptomsController");
 const { isAuthenticated, allowRoles, isAdmin } = require("../utils/authMiddleware");
 
+// Symptoms Routes
 router.get("/", isAuthenticated, allowRoles(["admin", "nurse"]), symptomsController.getAllSymptoms);
 router.get("/new", isAuthenticated, allowRoles(["admin"]), symptomsController.showAddForm);
 router.post("/", isAuthenticated, allowRoles(["admin"]), symptomsController.create);

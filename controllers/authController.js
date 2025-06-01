@@ -6,7 +6,7 @@ exports.register = async (req, res, next) => {
   const { username, password } = req.body;
 
   try {
-    // Check if username already exists (optional, but useful)
+    // Check if username already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       const err = new Error("Username already taken");
@@ -14,7 +14,7 @@ exports.register = async (req, res, next) => {
       return next(err);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12); // Always hash passwords!
+    const hashedPassword = await bcrypt.hash(password, 12); // Hashed passwords!
     const newUser = new User({
       username,
       password: hashedPassword,

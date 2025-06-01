@@ -1,6 +1,8 @@
 <%- include("partials/header") %>
+
 <link rel="stylesheet" href="/css/style.css">
 
+<!--Login form-->
 <h2>Login</h2>
 <form action="/login" method="POST">
   <label for="username">Username:</label>
@@ -9,6 +11,6 @@
   <input type="password" name="password" required>
   <button type="submit">Login</button>
 </form>
-<p>Don’t have an account? <a href="/register">Register here</a>.</p>
+<p>Don't have an account? <a href="/register">Register here</a>.</p>
 
 <%- include("partials/footer") %>

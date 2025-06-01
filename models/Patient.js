@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 
+// Define the Patient schema
 const patientSchema = new mongoose.Schema({
   title: {
     type: String,

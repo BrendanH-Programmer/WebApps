@@ -1,5 +1,8 @@
 <%- include("../partials/header") %>
+
 <link rel="stylesheet" href="/css/style.css">
+
+<!--Edit Room frorm-->
 <h2>Edit Room - <%= room.name %></h2>
 
 <form action="/rooms/<%= room._id %>?_method=PUT" method="POST">

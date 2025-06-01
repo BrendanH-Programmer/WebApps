@@ -1,5 +1,8 @@
 <%- include("../partials/header") %>
+
 <link rel="stylesheet" href="/css/style.css">
+
+<!--View specific patient information-->
 <div class="<%= patient.infectionRisk >= 7 ? 'high-risk' : patient.infectionRisk >= 4 ? 'moderate-risk' : 'low-risk' %>">
   <h1>Patient Details</h1>
   <p><strong>Full Name:</strong> <%= patient.title %> <%= patient.firstName %> <%= patient.surname %></p>
@@ -36,4 +39,5 @@
 <a href="/patients" class="action-btn btn-view">Back to List</a>
 <a href="/patients/<%= patient._id %>/edit" class="action-btn btn-edit">Edit</a>
 </div>
+
 <%- include("../partials/footer") %>

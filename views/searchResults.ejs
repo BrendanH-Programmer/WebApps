@@ -1,13 +1,14 @@
 <%- include("partials/header") %>
+
 <link rel="stylesheet" href="/css/style.css">
 
+<!--Search results for patient-->
 <div class="container">
   <h1>Search Results for "<%= query %>" in <%= type %>s</h1>
 
   <% if (results.length === 0) { %>
     <p>No results found.</p>
   <% } else { %>
-
     <% if (type === 'patient') { %>
       <% results.forEach(patient => { %>
         <div class="card mb-4 p-3 shadow-sm">
@@ -16,7 +17,6 @@
           <p><strong>Date of Birth:</strong> <%= new Date(patient.dateOfBirth).toLocaleDateString() %> (<%= patient.age %> years)</p>
           <p><strong>Phone Number:</strong> <%= patient.phoneNumber || 'N/A' %></p>
           <p><strong>Address:</strong> <%= patient.address || 'N/A' %></p>
-
           <p><strong>Symptoms:</strong>
             <ul>
               <% patient.symptoms.forEach(symptom => { %>
@@ -40,6 +40,7 @@
         </div>
       <% }) %>
 
+<!--Search results for room-->
     <% } else if (type === 'room') { %>
       <% results.forEach(room => { %>
         <div class="card mb-4 p-3 shadow-sm">
@@ -64,9 +65,7 @@
         </div>
       <% }) %>
     <% } %>
-
   <% } %>
-
 </div>
 
 <%- include("partials/footer") %>

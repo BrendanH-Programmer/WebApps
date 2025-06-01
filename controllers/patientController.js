@@ -27,7 +27,7 @@ exports.index = async (req, res) => {
     const sortOptions = {};
     if (sort) {
       const fieldMap = {
-        name: "surname", // Sorting by name uses surname for now
+        name: "surname", // Sorting by name uses surname
         dob: "dateOfBirth",
         age: "dateOfBirth", // We calculate age based on DOB, so sort by DOB
         gender: "gender",
@@ -44,7 +44,7 @@ exports.index = async (req, res) => {
 
     let patients = await Patient.find().populate("roomAssigned").lean();
 
-    // If sorting by age, sort manually in JS because age isn't a stored field
+    // Sort manually in JS because age isn't a stored field
     if (sort === "age") {
       patients.sort((a, b) => {
         const getAge = (dob) => {

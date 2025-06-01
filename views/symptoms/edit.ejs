@@ -1,6 +1,8 @@
 <%- include("../partials/header") %>
+
 <link rel="stylesheet" href="/css/style.css">
 
+<!--Edit symptoms form-->
 <h1>Edit Symptom</h1>
 <form action="/symptoms/<%= symptom._id %>?_method=PUT" method="POST">
   <label for="name">Symptom Name:</label>

@@ -4,29 +4,58 @@
 <h1>Symptom Management</h1>
 
 <% if (user && user.role === 'admin') { %>
-  <a href="/symptoms/new">Add New Symptom</a>
+  <a href="/symptoms/new" class="btn-add">Add New Symptom</a>
 <% } %>
 
-<table border="1">
-  <tr>
-    <th>Name</th>
-    <th>Risk Value</th>
-    <th>Actions</th>
-  </tr>
+<!-- Table View for Larger Screens -->
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Risk Value</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% symptoms.forEach(symptom => { %>
+        <tr>
+          <td><%= symptom.name %></td>
+          <td><%= symptom.riskValue %></td>
+          <td>
+            <% if (user && user.role === 'admin') { %>
+              <form action="/symptoms/<%= symptom._id %>/edit" method="GET" style="display:inline;">
+                <button type="submit" class="action-btn btn-edit">Edit</button>
+              </form>
+              <form action="/symptoms/<%= symptom._id %>?_method=DELETE" method="POST" style="display:inline;">
+                <button type="submit" class="action-btn btn-delete" onclick="return confirm('Delete this symptom?');">Delete</button>
+              </form>
+            <% } %>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Card View for Mobile -->
+<div class="symptom-cards">
   <% symptoms.forEach(symptom => { %>
-    <tr>
-      <td><%= symptom.name %></td>
-      <td><%= symptom.riskValue %></td>
-      <td>
-        <% if (user && user.role === 'admin') { %>
-          <a href="/symptoms/<%= symptom._id %>/edit">Edit</a>
-          <form action="/symptoms/<%= symptom._id %>?_method=DELETE" method="POST" style="display:inline;">
-            <button type="submit" onclick="return confirm('Delete this symptom?');">Delete</button>
+    <div class="symptom-card">
+      <h3><%= symptom.name %></h3>
+      <p><strong>Risk Value:</strong> <%= symptom.riskValue %></p>
+      <% if (user && user.role === 'admin') { %>
+        <div class="card-actions">
+          <form action="/symptoms/<%= symptom._id %>/edit" method="GET" style="display:inline;">
+            <button type="submit" class="action-btn btn-edit">Edit</button>
           </form>
-        <% } %>
-      </td>
-    </tr>
-  <% }); %>
-</table>
+          <form action="/symptoms/<%= symptom._id %>?_method=DELETE" method="POST" style="display:inline;">
+            <button type="submit" class="action-btn btn-delete" onclick="return confirm('Delete this symptom?');">Delete</button>
+          </form>
+        </div>
+      <% } %>
+    </div>
+  <% }) %>
+</div>
 
 <%- include("../partials/footer") %>

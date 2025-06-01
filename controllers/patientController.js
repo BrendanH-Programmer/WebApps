@@ -331,8 +331,7 @@ exports.searchPatients = async (query) => {
         { nhsNumber: regex },
         { symptoms: { $in: [regex] } }, // match symptoms array
       ]
-    });
-
+    }).populate('roomAssigned');
     return patients;
   } catch (err) {
     return [];

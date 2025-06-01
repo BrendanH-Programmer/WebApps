@@ -33,6 +33,7 @@
   </p>
   <p><strong>NHS Number:</strong> <%= patient.nhsNumber %></p>
 
-<a href="/patients">Back to List</a> | <a href="/patients/<%= patient._id %>/edit">Edit</a>
+<a href="/patients" class="action-btn btn-view">Back to List</a>
+<a href="/patients/<%= patient._id %>/edit" class="action-btn btn-edit">Edit</a>
 </div>
 <%- include("../partials/footer") %>

@@ -16,12 +16,7 @@
           <p><strong>Date of Birth:</strong> <%= new Date(patient.dateOfBirth).toLocaleDateString() %> (<%= patient.age %> years)</p>
           <p><strong>Phone Number:</strong> <%= patient.phoneNumber || 'N/A' %></p>
           <p><strong>Address:</strong> <%= patient.address || 'N/A' %></p>
-          <p><strong>Emergency Contact:</strong></p>
-          <ul>
-            <li><strong>Name:</strong> <%= patient.emergencyContact?.name || 'N/A' %></li>
-            <li><strong>Relationship:</strong> <%= patient.emergencyContact?.relationship || 'N/A' %></li>
-            <li><strong>Phone:</strong> <%= patient.emergencyContact?.phone || 'N/A' %></li>
-          </ul>
+
           <p><strong>Symptoms:</strong>
             <ul>
               <% patient.symptoms.forEach(symptom => { %>
@@ -30,7 +25,16 @@
             </ul>
           </p>
           <p><strong>Infection Risk:</strong> <%= patient.infectionRisk %></p>
-          <p><strong>Room Assigned:</strong> <%= patient.roomAssigned ? patient.roomAssigned.name : "Not Assigned" %></p>
+          <p>
+              <strong>Room Assigned:</strong>
+              <% if (patient.roomAssigned) { %>
+                <a href="/rooms/<%= patient.roomAssigned._id %>">
+                  <%= patient.roomAssigned.name %>
+                </a>
+              <% } else { %>
+                Not Assigned
+              <% } %>
+            </p>  
           <p><strong>NHS Number:</strong> <%= patient.nhsNumber %></p>
           <a href="/patients/<%= patient._id %>" class="btn btn-primary mt-2">View Full Profile</a>
         </div>
@@ -40,11 +44,21 @@
       <% results.forEach(room => { %>
         <div class="card mb-4 p-3 shadow-sm">
           <h2>Room: <%= room.name %></h2>
-          <p><strong>Room Number:</strong> <%= room.roomNumber %></p>
+          <p><strong>Room Number:</strong> <%= room.name %></p>
           <p><strong>Isolation Room:</strong> <%= room.isIsolation ? "Yes" : "No" %></p>
           <p><strong>Capacity:</strong> <%= room.capacity || "N/A" %></p>
-          <p><strong>Ward:</strong> <%= room.ward || "N/A" %></p>
-          <p><strong>Status:</strong> <%= room.status || "N/A" %></p>
+          <p>
+            <strong>Status:</strong>
+            <% if (room.capacity && room.currentPatients) { %>
+              <% if (room.currentPatients.length >= room.capacity) { %>
+                Full
+              <% } else { %>
+                Available
+              <% } %>
+            <% } else { %>
+              N/A
+            <% } %>
+          </p>
           <p><strong>Patients Currently Assigned:</strong> <%= room.currentPatients?.length || 0 %></p>
           <a href="/rooms/<%= room._id %>" class="btn btn-primary mt-2">View Room Details</a>
         </div>

@@ -37,14 +37,14 @@
   </label>
 
   <label>Phone Number:
-    <input type="tel" name="phoneNumber" value="<%= patient.phoneNumber || '' %>">
+    <input type="number" name="phoneNumber" value="<%= patient.phoneNumber || '' %>">
   </label>
 
   <fieldset>
     <legend>Emergency Contact</legend>
       <label>Name: <input type="text" name="emergencyContactName" value="<%= patient.emergencyContact?.name || '' %>"></label>
       <label>Relationship: <input type="text" name="emergencyContactRelationship" value="<%= patient.emergencyContact?.relationship || '' %>"></label>
-      <label>Phone: <input type="tel" name="emergencyContactPhone" value="<%= patient.emergencyContact?.phone || '' %>"></label>
+      <label>Phone: <input type="number" name="emergencyContactPhone" value="<%= patient.emergencyContact?.phone || '' %>"></label>
   </fieldset>
 
   <fieldset>

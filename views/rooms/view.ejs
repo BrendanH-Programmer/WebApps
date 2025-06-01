@@ -1,46 +1,61 @@
 <%- include("../partials/header") %>
 <link rel="stylesheet" href="/css/style.css">
 
-<div class="room-card <%= room.isIsolation ? 'isolation-room' : 'non-isolation-room' %>">
-  <h1>Room Details</h1>
-  <div>
-    <h2>Room Number: <%= room.roomNumber %></h2>
-    <p><strong>Isolation Room:</strong> <%= room.isIsolation ? "Yes" : "No" %></p>
-    <p><strong>Capacity:</strong> <%= room.capacity || "N/A" %></p>
-  </div>
+<h1>Room Details</h1>
 
-  <h3>Patients in this room</h3>
+<div class="room-info">
+  <h2>Room Number: <%= room.name %></h2>
+  <p><strong>Isolation Room:</strong> <%= room.isIsolation ? "Yes" : "No" %></p>
+  <p><strong>Capacity:</strong> <%= room.capacity || "N/A" %></p>
+</div>
 
-  <% if (patients.length === 0) { %>
-    <p>No patients currently assigned to this room.</p>
-  <% } else { %>
-    <table border="1" cellpadding="8">
+<h3>Patients in this Room</h3>
+
+<% if (patients.length === 0) { %>
+  <p>No patients currently assigned to this room.</p>
+<% } else { %>
+  <!-- Table View for Larger Screens -->
+  <div class="table-container">
+    <table>
       <thead>
         <tr>
           <th>Name</th>
           <th>Date of Birth</th>
           <th>Gender</th>
           <th>Contact</th>
-          <!-- Add other patient fields you want here -->
         </tr>
       </thead>
       <tbody>
         <% patients.forEach(patient => { %>
-          <tr>
+          <tr class="<%= patient.infectionRisk >= 7 ? 'high-risk' : patient.infectionRisk >= 4 ? 'moderate-risk' : 'low-risk' %>">
             <td>
               <a href="/patients/<%= patient._id %>">
                 <%= patient.firstName %> <%= patient.surname %>
               </a>
             </td>
-            <td><%= patient.dateOfBirth ? patient.dateOfBirth.toISOString().split('T')[0] : 'N/A' %></td>
+            <td><%= new Date(patient.dateOfBirth).toLocaleDateString() %></td>
             <td><%= patient.gender || 'N/A' %></td>
             <td><%= patient.phoneNumber || 'N/A' %></td>
           </tr>
         <% }) %>
       </tbody>
     </table>
-  <% } %>
-</div>
-<a href="/rooms">Back to Rooms List</a>
+  </div>
+
+  <!-- Card View for Mobile -->
+  <div class="patient-cards">
+    <% patients.forEach(patient => { %>
+      <div class="patient-card <%= patient.infectionRisk >= 7 ? 'high-risk' : patient.infectionRisk >= 4 ? 'moderate-risk' : 'low-risk' %>">
+        <h4><%= patient.firstName %> <%= patient.surname %></h4>
+        <p><strong>DOB:</strong> <%= new Date(patient.dateOfBirth).toLocaleDateString() %></p>
+        <p><strong>Gender:</strong> <%= patient.gender || 'N/A' %></p>
+        <p><strong>Contact:</strong> <%= patient.phoneNumber || 'N/A' %></p>
+        <a href="/patients/<%= patient._id %>" class="action-btn btn-view">View</a>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<a href="/rooms" class="btn-back">Back to Rooms List</a>
 
 <%- include("../partials/footer") %>

@@ -1,43 +1,29 @@
 <%- include("../partials/header") %>
 <link rel="stylesheet" href="/css/style.css">
 
-<div class="room-card">
-  <h2>All Rooms</h2> 
-  <% if (user && user.role === "admin") { %>
-    <a href="/rooms/new">+ Add New Room</a>
-  <% } %>
+<h1>All Rooms</h1>
 
+<!-- Add Room button -->
+<% if (user && user.role === "admin") { %>
+  <a href="/rooms/new" class="btn-add">+ Add New Room</a>
+<% } %>
+
+<!-- Table view for desktop -->
+<div class="table-container">
   <table>
     <thead>
       <tr>
-        <th>
-          Name
-          <a href="?sort=name&order=asc">&#9650;</a>
-          <a href="?sort=name&order=desc">&#9660;</a>
-        </th>
-        <th>
-          Capacity
-          <a href="?sort=capacity&order=asc">&#9650;</a>
-          <a href="?sort=capacity&order=desc">&#9660;</a>
-        </th>
-        <th>
-          Current Patients
-          <a href="?sort=currentPatients&order=asc">&#9650;</a>
-          <a href="?sort=currentPatients&order=desc">&#9660;</a>
-        </th>
-        <th>
-          <a href="?sort=isolation&order=<%= currentSort.field === 'isolation' && currentSort.order === 'asc' ? 'desc' : 'asc' %>">
-            Isolation
-            <%= currentSort.field === 'isolation' ? (currentSort.order === 'asc' ? '▼' : '▲') : '' %>
-          </a>
-        </th>
+        <th>Name <a href="?sort=name&order=asc">&#9650;</a> <a href="?sort=name&order=desc">&#9660;</a></th>
+        <th>Capacity <a href="?sort=capacity&order=asc">&#9650;</a> <a href="?sort=capacity&order=desc">&#9660;</a></th>
+        <th>Current Patients <a href="?sort=currentPatients&order=asc">&#9650;</a> <a href="?sort=currentPatients&order=desc">&#9660;</a></th>
+        <th>Isolation <a href="?sort=isolation&order=asc">&#9650;</a> <a href="?sort=isolation&order=desc">&#9660;</a></th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <% rooms.forEach(room => { %>
         <tr class="<%= room.isIsolation ? 'isolation-room' : 'non-isolation-room' %>">
-          <td><a href="/rooms/<%= room._id %>"><%= room.name %></a></td>
+          <td><%= room.name %></td>
           <td>
             <%= room.capacity %>
             <% if (room.currentPatients.length >= room.capacity) { %>
@@ -47,10 +33,15 @@
           <td><%= room.currentPatients.length %></td>
           <td><%= room.isIsolation ? "Yes" : "No" %></td>
           <td>
+            <form action="/rooms/<%= room._id %>" method="GET" style="display:inline;">
+              <button type="submit" class="action-btn btn-view">View</button>
+            </form>
             <% if (user && user.role === "admin") { %>
-              <a href="/rooms/<%= room._id %>/edit">Edit</a> |
+              <form action="/rooms/<%= room._id %>/edit" method="GET" style="display:inline;">
+                <button type="submit" class="action-btn btn-edit">Edit</button>
+              </form>
               <form action="/rooms/<%= room._id %>?_method=DELETE" method="POST" style="display:inline;">
-                <button type="submit" <%= room.currentPatients.length > 0 ? 'disabled title="Cannot delete room with patients assigned"' : '' %>>Delete</button>
+                <button type="submit" onclick="return confirm('Delete this room?')" <%= room.currentPatients.length > 0 ? 'disabled title="Cannot delete room with patients assigned"' : '' %> class="action-btn btn-delete">Delete</button>
               </form>
             <% } %>
           </td>
@@ -58,6 +49,34 @@
       <% }) %>
     </tbody>
   </table>
+</div>
+
+<!-- Card view for mobile -->
+<div class="room-cards">
+  <% rooms.forEach(room => { %>
+    <div class="room-card <%= room.isIsolation ? 'isolation-room' : 'non-isolation-room' %>">
+      <h3><%= room.name %></h3>
+      <p><strong>Capacity:</strong> <%= room.capacity %> 
+        <% if (room.currentPatients.length >= room.capacity) { %>
+          <span style="color: red; font-weight: bold;">(Full)</span>
+        <% } %>
+      </p>
+      <p><strong>Current Patients:</strong> <%= room.currentPatients.length %></p>
+      <p><strong>Isolation:</strong> <%= room.isIsolation ? "Yes" : "No" %></p>
+
+      <form action="/rooms/<%= room._id %>" method="GET" style="display:inline;">
+        <button type="submit" class="action-btn btn-view">View</button>
+      </form>
+      <% if (user && user.role === "admin") { %>
+        <form action="/rooms/<%= room._id %>/edit" method="GET" style="display:inline;">
+          <button type="submit" class="action-btn btn-edit">Edit</button>
+        </form>
+        <form action="/rooms/<%= room._id %>?_method=DELETE" method="POST" style="display:inline;">
+          <button type="submit" onclick="return confirm('Delete this room?')" <%= room.currentPatients.length > 0 ? 'disabled title="Cannot delete room with patients assigned"' : '' %> class="action-btn btn-delete">Delete</button>
+        </form>
+      <% } %>
+    </div>
+  <% }) %>
 </div>
 
 <%- include("../partials/footer") %>

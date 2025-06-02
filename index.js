@@ -1,3 +1,6 @@
+// Load environment variables from .env
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
@@ -5,79 +8,78 @@ const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const MongoStore = require("connect-mongo");
 const path = require("path");
+
+// Import routes
 const authRoutes = require("./routes/authRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const roomRoutes = require("./routes/roomRoutes");
 const symptomRoutes = require("./routes/symptomRoutes");
+
+// Import custom middleware
 const { setUserInViews } = require("./utils/authMiddleware");
 
-// Load environment variables from .env file
-require("dotenv").config();
-
-
-// Create an Express application
 const app = express();
 
+// Get environment variables
+const PORT = process.env.PORT || 10017;
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/hospitalDB";
+const SESSION_SECRET = process.env.SESSION_SECRET || "hospitalSecretKey";
 
-// Connect to MongoDB database
-mongoose.connect("mongodb://20.0.153.128:10999/BrendanDB")
+// Connect to MongoDB
+mongoose.connect(MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Connection Error:", err));
 
-  
-// Set view engine to EJS for rendering dynamic HTML pages
+// Set view engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Serve static files from the 'public' directory (CSS, JS, images)
+// Static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Parse URL-encoded form data
+// Body parsing
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Enable method override to support PUT/DELETE via query param (e.g., ?_method=PUT)
+// Method override for PUT/DELETE
 app.use(methodOverride("_method"));
 
-// Configure session management using MongoDB for session storage
+// Session management
 app.use(session({
-  secret: 'hospitalSecretKey', // Secret key for signing the session ID cookie
-  resave: false, // Do not save session if unmodified
-  saveUninitialized: false, // Do not create session until something is stored
+  secret: SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: "mongodb://20.0.153.128:10999/BrendanDB", // Store sessions in the same MongoDB
-    ttl: 14 * 24 * 60 * 60 // Session expires after 14 days
+    mongoUrl: MONGO_URI,
+    ttl: 14 * 24 * 60 * 60, // 14 days
   }),
-  cookie: { secure: false } // Set to true if serving over HTTPS (e.g., in production)
+  cookie: { secure: false }, // Set to true if using HTTPS
 }));
 
-// Middleware before your routes
+// Middleware: User in views
 app.use(setUserInViews);
 
-
-// Route definitions (after middleware)
+// Routes
 app.use("/", authRoutes);
 app.use("/patients", patientRoutes);
 app.use("/rooms", roomRoutes);
 app.use("/symptoms", symptomRoutes);
 
-
-// Middleware to handle 403 Forbidden (access denied)
-function forbiddenHandler(req, res, next) {
+// 403 Forbidden handler
+app.use((req, res, next) => {
   const err = new Error("Forbidden");
   err.status = 403;
   next(err);
-}
+});
 
-// 404 Not Found
+// 404 handler
 app.use((req, res) => {
   res.status(404).render("errors/404", { url: req.originalUrl });
 });
 
-// Error handling middleware - catches all errors passed with next(err)
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-
   if (err.status === 403) {
     res.status(403).render("errors/403");
   } else {
@@ -85,12 +87,12 @@ app.use((err, req, res, next) => {
   }
 });
 
-// Redirect root URL ('/') to homepage
+// Redirect root to homepage
 app.get('/', (req, res) => {
   res.redirect('/homepage');
 });
 
-// Start the server on specified port (from .env or default to 10017)
-app.listen(process.env.PORT || 10017, () => {
-  console.log("Server is running");
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: hospital-room-management
+    ports:
+      - "10017:10017"
+      - "10018:10017"
+      - "10019:10017"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: unless-stopped
